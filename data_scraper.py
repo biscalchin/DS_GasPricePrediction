@@ -82,25 +82,20 @@ def data_scraper():
 def data_cleaner(resource):
     try:
         print("Cleaning...")
-        sleep(0.5)
         print("Dropping useless columns...")
-        sleep(0.5)
         # Drop the columns named Dividends and Stock Splits from resource along the horizontal axis
         resource = resource.drop(["Dividends", "Stock Splits"], axis=1)
         print("Operation Succeed!")
         print("Splitting indexes...")
-        sleep(0.5)
         # Assign the index of resource to date_time and convert it to a series object
         date_time = resource.index
         date_time = date_time.to_series()
         print("Creating date and time column...")
-        sleep(0.5)
         # Add two new columns to resource named Date and Hour, with values extracted from date_time
         resource["Date"] = date_time.dt.date
         resource["Hour"] = date_time.dt.time
         print("Operation Succeed!")
-        # Wait for 0.5 seconds and return resource as the output of the function
-        sleep(0.5)
+        # Return resource as the output of the function
         return resource
     # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
