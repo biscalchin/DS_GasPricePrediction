@@ -19,7 +19,6 @@ def gradient_incline(m_now, q_now, datas, learning_rate):
         y = datas.iloc[i].Close
         m_grad += -(2/n) * x * (y - (m_now * x + q_now))
         q_grad += -(2 / n) * (y - (m_now * x + q_now))
-
     m = m_now - m_grad * learning_rate
     q = q_now - q_grad * learning_rate
     return m, q
@@ -32,8 +31,8 @@ def linear_regression():
 
         m = 0
         q = 0
-        lr = 0.0001
-        iteration = 1000
+        lr = 0.00001
+        iteration = 500
         for i in range(iteration):
             if i % 50 == 0:
                 print(f"iteration: {i}")
@@ -45,7 +44,7 @@ def linear_regression():
 
     # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
-        print("Task finished successfully")
+        print("Task interrupted successfully")
     # Handle any other exception and print its message
     except Exception as e:
         print("Exception encountered:", e)
