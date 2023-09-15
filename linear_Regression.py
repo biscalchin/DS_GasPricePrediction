@@ -11,10 +11,17 @@ def load_data():
 
 
 def linear_regression():
-    data = load_data()
-    print(data)
-    plt.scatter(data.index, data.Close)
-    plt.show()
+    try:
+        data = load_data()
+        print(data)
+        plt.scatter(data.index, data.Close)
+        plt.show()
+    # Handle KeyboardInterrupt to gracefully exit the program
+    except KeyboardInterrupt:
+        print("Task finished successfully")
+    # Handle any other exception and print its message
+    except Exception as e:
+        print("Exception encountered:", e)
 
 
 if __name__ == '__main__':
