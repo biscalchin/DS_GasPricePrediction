@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import matplotlib as mpl
 
 
 def load_data():
