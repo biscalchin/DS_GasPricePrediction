@@ -31,7 +31,7 @@ def linear_regression():
 
         m = 0
         q = 0
-        lr = 0.00001
+        lr = 0.0001
         iteration = 500
         for i in range(iteration):
             if i % 50 == 0:
