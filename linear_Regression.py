@@ -10,16 +10,6 @@ def load_data():
     return data
 
 
-# Assuming y = mx + q
-def mean_sq_err(m, q, datas):
-    sum_err = 0
-    for i in range(len(datas)):
-        x = datas.iloc[i].index
-        y = datas.iloc[i].Close
-        sum_err += (y - (m * x + q))**2
-    sum_err /= float(len(datas))
-
-
 def gradient_incline(m_now, q_now, datas, learning_rate):
     m_grad = 0
     q_grad = 0
