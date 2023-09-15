@@ -28,8 +28,7 @@ def linear_regression():
     try:
         data = load_data()
         print(data)
-
-        m = 0
+        m = 1
         q = 0
         lr = 0.0001
         iteration = 500
