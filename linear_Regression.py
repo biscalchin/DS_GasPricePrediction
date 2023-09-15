@@ -15,7 +15,7 @@ def gradient_incline(m_now, q_now, datas, learning_rate):
     q_grad = 0
     n = len(datas)
     for i in range(n):
-        x = datas.iloc[i].index
+        x = float(datas.index[i])
         y = datas.iloc[i].Close
         m_grad += -(2/n) * x * (y - (m_now * x + q_now))
         q_grad += -(2 / n) * (y - (m_now * x + q_now))
