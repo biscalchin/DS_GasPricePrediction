@@ -96,6 +96,11 @@ def data_cleaner(resource):
         resource["Hour"] = date_time.dt.time
         print("Operation Succeed!")
         # Return resource as the output of the function
+        for i in range(len(resource)):
+            resource.loc[:, 'Open'] = round(resource['Open'], 4)
+            resource.loc[:, 'High'] = round(resource['High'], 4)
+            resource.loc[:, 'Low'] = round(resource['Low'], 4)
+            resource.loc[:, 'Close'] = round(resource['Close'], 4)
         return resource
     # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:

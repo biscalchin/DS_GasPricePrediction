@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def load_data():
-    file_name = "1m_interval_NG_2023-09-13_7d_period.csv"
+    file_name = "1m_interval_NG_2023-09-15_7d_period.csv"
     folder_name = "Datas"
     path = folder_name + "/" + file_name
     data = pd.read_csv(path)
