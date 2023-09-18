@@ -31,9 +31,9 @@ def linear_regression():
         m = 1
         q = 0
         lr = 0.0001
-        iteration = 500
+        iteration = 80
         for i in range(iteration):
-            if i % 50 == 0:
+            if i % 10 == 0:
                 print(f"iteration: {i}")
             m, q = gradient_incline(m, q, data, lr)
 

@@ -62,9 +62,7 @@ def data_scraper():
         # launching the data cleaner
         data = data_cleaner(data)
         print("Data cleaning terminated. \n*** Data are now clean ***")
-        sleep(0.8)
         print(data)
-        sleep(0.8)
         prefix = f"{interval}_interval"
         suffix = f"_{period}_period"
         print(f"Saving data to {get_filename(prefix, suffix)}...")
