@@ -1,5 +1,4 @@
 # Import the necessary libraries
-import numpy as np
 import yfinance as yf  # For Yahoo Finance data retrieval
 import pandas as pd    # For working with data in DataFrame format
 import datetime as dt  # For working with date and time
@@ -20,7 +19,7 @@ def get_filename(prefix="", suffix=""):
 
 # Define the function to write a pandas DataFrame to a CSV file with a specified filename
 def save_to_csv(data, prefix="", suffix=""):
-    data.to_csv(get_filename(prefix, suffix), index=False)
+    data.to_csv("dataset.csv", index=False)
 
 
 # Define a function to get the period from the user with strict input validation
@@ -82,22 +81,10 @@ def data_cleaner(resource):
         print("Cleaning...")
         print("Dropping useless columns...")
         # Drop the columns named Dividends and Stock Splits from resource along the horizontal axis
-        resource = resource.drop(["Dividends", "Stock Splits"], axis=1)
-        print("Operation Succeed!")
-        print("Splitting indexes...")
-        # Assign the index of resource to date_time and convert it to a series object
-        date_time = resource.index
-        date_time = date_time.to_series()
-        print("Creating date and time column...")
-        # Add two new columns to resource named Date and Hour, with values extracted from date_time
-        resource["Date"] = date_time.dt.date
-        resource["Hour"] = date_time.dt.time
+        resource = resource.drop(["Dividends", "Stock Splits", "Low", "High", "Open"], axis=1)
         print("Operation Succeed!")
         # Return resource as the output of the function
         for i in range(len(resource)):
-            resource.loc[:, 'Open'] = round(resource['Open'], 4)
-            resource.loc[:, 'High'] = round(resource['High'], 4)
-            resource.loc[:, 'Low'] = round(resource['Low'], 4)
             resource.loc[:, 'Close'] = round(resource['Close'], 4)
         return resource
     # Handle KeyboardInterrupt to gracefully exit the program
