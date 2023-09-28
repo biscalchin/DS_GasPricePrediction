@@ -3,11 +3,11 @@ import numpy as np
 
 class LinearRegression:
 
-    def __init__(self, lr=0.0000001, n_iters=100000):
+    def __init__(self, lr=0.0000001, n_iters=10000):
         # Initialize the Linear Regression model with hyperparameters
         self.lr = lr  # Learning rate for gradient descent
         self.n_iters = n_iters  # Number of iterations for training
-        self.weights = None  # Model weights (coefficients)
+        self.weights = None  # Model weights (angular coefficients)
         self.bias = None  # Model bias (intercept)
 
     def fit(self, X, y):
