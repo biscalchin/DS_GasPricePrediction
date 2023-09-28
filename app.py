@@ -1,14 +1,31 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from class_l_reg import LinearRegression
+from LinearRegression import LinearRegression
 from sklearn.model_selection import train_test_split
+from data_scraper import *
 
 
 def load_data():
-    file_name = "dataset.csv"
-    data = pd.read_csv(file_name)
-    return data
+    try:
+        file_name = get_filename()
+        data = pd.read_csv(file_name)
+        print(f"{data} \nFound a previous session...")
+        choise = input("Would you like to use those datas? (y/n)\n> ")
+        if choise == "y":
+            return data
+        else:
+            data_scraper()
+            return load_data()
+    # Handle KeyboardInterrupt to gracefully exit the program
+    except KeyboardInterrupt:
+        print("Task interrupted successfully")
+    # Handle any other exception and print its message
+    except Exception as e:
+        print("Exception encountered:", e)
+        print("Couldn't find data from a previous session. \n Generating New Data")
+        data_scraper()
+        return load_data()
 
 
 def mean_sq_err(y_test, prediction):
@@ -23,8 +40,7 @@ def app():
         y = dataset["Close"]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1234)
 
-
-        reg = LinearRegression(lr=0.0000001, n_iters=1000)
+        reg = LinearRegression(lr=0.000000001, n_iters=10000)
         reg.fit(X, y)
         prediction = reg.predict(X_test)
         mse = mean_sq_err(y_test, prediction)
@@ -34,9 +50,8 @@ def app():
         fig = plt.figure(figsize=(8,6))
         m1 = plt.scatter(X_train, y_train, color=cmap(0.9), s=1)
         m2 = plt.scatter(X_test, y_test, color=cmap(0.5), s=1)
-        plt.plot(X, y_pred_line, color="red", linewidth=1, label='Prediction')
+        plt.plot(X, y_pred_line, color="Black", linewidth=1, label='Prediction')
         plt.show()
-
 
     # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
