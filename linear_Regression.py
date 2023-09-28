@@ -24,7 +24,7 @@ def app():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1234)
 
 
-        reg = LinearRegression()
+        reg = LinearRegression(lr=0.0000001, n_iters=1000)
         reg.fit(X, y)
         prediction = reg.predict(X_test)
         mse = mean_sq_err(y_test, prediction)
@@ -34,7 +34,7 @@ def app():
         fig = plt.figure(figsize=(8,6))
         m1 = plt.scatter(X_train, y_train, color=cmap(0.9), s=1)
         m2 = plt.scatter(X_test, y_test, color=cmap(0.5), s=1)
-        plt.plot(X, y_pred_line, color="red", linewidth=1, label='Predictiation')
+        plt.plot(X, y_pred_line, color="red", linewidth=1, label='Prediction')
         plt.show()
 
 

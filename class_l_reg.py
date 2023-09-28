@@ -14,7 +14,7 @@ class LinearRegression:
         n_samples, n_features = X.shape
         self.weights = np.zeros(n_features)
         self.bias = 0
-
+        n_rep = self.n_iters / 20
         for i in range(self.n_iters):
             y_pred = np.dot(X, self.weights) + self.bias
 
@@ -23,7 +23,7 @@ class LinearRegression:
 
             self.weights = self.weights - self.lr * dw
             self.bias = self.bias - self.lr * db
-            if i % 20 == 0:
+            if i % n_rep == 0:
                 print(f"Training Iteration {i}")
                 print(f"dw = {dw}\ndb = {db}")
 
