@@ -40,6 +40,26 @@ def mean_sq_err(y_test, prediction):
     return np.mean((y_test - prediction) ** 2)
 
 
+def get_float(string):
+    try:
+        n = input(string)
+        n = float(n)
+        return n
+    except Exception as e:
+        print("Error! Wrong number: Expected Float", e)
+        return get_float(string)
+
+
+def get_int(string):
+    try:
+        n = input(string)
+        n = int(n)
+        return n
+    except Exception as e:
+        print("Error! Wrong number: Expected Integer", e)
+        return get_int(string)
+
+
 # Define the main application function
 def app():
     try:
@@ -54,8 +74,12 @@ def app():
         # Split the data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1234)
 
+        # getting the lr and the amount of the iterations
+        learning_rate = get_float("Choose a learning rate: \n>")
+        num_iteration = get_int("Choose the amount of the iterations: \n>")
+
         # Create an instance of your custom LinearRegression class
-        reg = LinearRegression(lr=0.000000001, n_iters=10000)
+        reg = LinearRegression(lr=learning_rate, n_iters=num_iteration)
 
         # Fit the linear regression model to the training data
         reg.fit(X, y)
