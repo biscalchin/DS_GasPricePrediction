@@ -1,47 +1,65 @@
 import numpy as np
+from numba import cuda
+
+
+@cuda.jit
+def _gpu_fit(n_iters, lr, X, y, weights, bias):
+    n_samples, n_features = X.shape
+    tx = cuda.threadIdx.x
+    bx = cuda.blockIdx.x
+    bdim = cuda.blockDim.x
+    gdim = cuda.gridDim.x
+    n_rep = n_iters // 20
+
+    for i in range(n_iters):
+        for j in range(bx, n_samples, bdim * gdim):
+            y_pred = bias[0]
+            for k in range(n_features):
+                y_pred += X[j, k] * weights[k]
+
+            db = y_pred - y[j]
+            for k in range(n_features):
+                dw = X[j, k] * db
+                cuda.atomic.add(weights, k, -lr * dw)
+            cuda.atomic.add(bias, 0, -lr * db)
+
+        if i % n_rep == 0:
+            if tx == 0 and bx == 0:
+                print("Training Iteration ", i)  # Modified print statement
 
 
 class LinearRegression:
 
     def __init__(self, lr=0.0000001, n_iters=10000):
-        # Initialize the Linear Regression model with hyperparameters
         self.lr = lr  # Learning rate for gradient descent
         self.n_iters = n_iters  # Number of iterations for training
         self.weights = None  # Model weights (angular coefficients)
         self.bias = None  # Model bias (intercept)
 
     def fit(self, X, y):
-        # Fit the linear regression model to the given data
-
-        # Get the number of samples and features in the input data
         n_samples, n_features = X.shape
-
-        # Initialize the weights and bias to zeros
         self.weights = np.zeros(n_features)
-        self.bias = 0
+        self.bias = np.zeros(1)
 
-        # Define a variable to control the printing of training progress
-        n_rep = self.n_iters / 20
+        # Convert numpy arrays to numba device arrays
+        X_device = cuda.to_device(X)
+        y_device = cuda.to_device(y)
+        weights_device = cuda.to_device(self.weights)
+        bias_device = cuda.to_device(self.bias)
 
-        # Iterate through the training process
-        for i in range(self.n_iters):
-            # Make predictions using the current weights and bias
-            y_pred = np.dot(X, self.weights) + self.bias
+        # Define the number of threads in a block
+        threads_per_block = 128
+        # Calculate the number of blocks per grid
+        blocks_per_grid = (n_samples + threads_per_block - 1) // threads_per_block
 
-            # Calculate the gradient of the loss function with respect to weights and bias
-            dw = (1/n_samples) * np.dot(X.T, (y_pred - y))
-            db = (1/n_samples) * np.sum(y_pred - y)
+        # Launch the CUDA kernel
+        _gpu_fit[blocks_per_grid, threads_per_block](self.n_iters, self.lr, X_device, y_device, weights_device,
+                                                     bias_device)
 
-            # Update the weights and bias using gradient descent
-            self.weights = self.weights - self.lr * dw
-            self.bias = self.bias - self.lr * db
-
-            # Print training progress every 'n_rep' iterations
-            if i % n_rep == 0:
-                print(f"Training Iteration {i}")
-                print(f"dw = {dw}\ndb = {db}")
+        # Copy the trained weights and bias back to host
+        self.weights = weights_device.copy_to_host()
+        self.bias = bias_device.copy_to_host()
 
     def predict(self, X):
-        # Make predictions using the trained linear regression model
         y_pred = np.dot(X, self.weights) + self.bias
         return y_pred
