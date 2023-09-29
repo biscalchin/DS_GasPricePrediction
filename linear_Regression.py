@@ -10,44 +10,76 @@ def load_data():
     return data
 
 
-def gradient_incline(m_now, q_now, datas, learning_rate):
-    m_grad = 0
-    q_grad = 0
-    n = len(datas)
-    for i in range(n):
-        x = float(datas.index[i])
-        y = datas.iloc[i].Close
-        m_grad += -(2/n) * x * (y - (m_now * x + q_now))
-        q_grad += -(2 / n) * (y - (m_now * x + q_now))
-    m = m_now - m_grad * learning_rate
-    q = q_now - q_grad * learning_rate
+def feature_scaling(data):
+    # Create a numerical index column for scaling
+    data['Numerical_Index'] = range(len(data))
+
+    # Scale the 'Numerical_Index' and 'Close' columns
+    data['Numerical_Index_scaled'] = (data['Numerical_Index'] - data['Numerical_Index'].mean()) / data[
+        'Numerical_Index'].std()
+    data['Close_scaled'] = (data['Close'] - data['Close'].mean()) / data['Close'].std()
+
+    return data
+
+
+def gradient_descent(data, learning_rate, num_iterations):
+    m = 0
+    q = 0
+    n = len(data)
+
+    for i in range(num_iterations):
+        m_gradient = 0
+        q_gradient = 0
+
+        for j in range(n):
+            x = data['Numerical_Index_scaled'].iloc[j]
+            y = data['Close_scaled'].iloc[j]
+            prediction = m * x + q
+
+            # Compute the gradients of the cost function with respect to m and q
+            m_gradient += -(2 / n) * x * (y - prediction)
+            q_gradient += -(2 / n) * (y - prediction)
+
+        # Update m and q using the gradients and the learning rate
+        m -= learning_rate * m_gradient
+        q -= learning_rate * q_gradient
+
     return m, q
 
 
-def linear_regression():
+def plot_data_and_regression(data, m, q):
+    plt.scatter(data['Numerical_Index_scaled'], data['Close_scaled'], color="blue")
+    plt.plot(data['Numerical_Index_scaled'], m * data['Numerical_Index_scaled'] + q, color="red")
+    plt.xlabel("Normalized Numerical Index")
+    plt.ylabel("Normalized Close Price")
+    plt.title("Linear Regression")
+    plt.show()
+
+
+def main():
     try:
         data = load_data()
+        print("Original Data:")
         print(data)
-        m = 1
-        q = 0
-        lr = 0.0001
-        iteration = 80
-        for i in range(iteration):
-            if i % 10 == 0:
-                print(f"iteration: {i}")
-            m, q = gradient_incline(m, q, data, lr)
 
-        plt.scatter(data.index, data.Close, color="blue")
-        plt.plot(list(range(0, 7000)), [m * x + q for x in range(0, 7000)], color="red")
-        plt.show()
+        data = feature_scaling(data)
+        print("Normalized Data:")
+        print(data)
 
-    # Handle KeyboardInterrupt to gracefully exit the program
+        learning_rate = 0.001
+        num_iterations = 1000
+        m, q = gradient_descent(data, learning_rate, num_iterations)
+
+        print(f"Final slope (m): {m}")
+        print(f"Final intercept (q): {q}")
+
+        plot_data_and_regression(data, m, q)
+
     except KeyboardInterrupt:
         print("Task interrupted successfully")
-    # Handle any other exception and print its message
     except Exception as e:
         print("Exception encountered:", e)
 
 
 if __name__ == '__main__':
-    linear_regression()
+    main()
