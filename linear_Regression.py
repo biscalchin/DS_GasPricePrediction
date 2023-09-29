@@ -36,7 +36,7 @@ def gradient_descent(data, learning_rate, num_iterations):
 
     for i in range(num_iterations):
         # Call progress_bar function here to show the progress
-        progress_bar(i, num_iterations)
+        progress_bar(i+1, num_iterations)
 
         m_gradient = 0
         q_gradient = 0
