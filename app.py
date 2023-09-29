@@ -82,7 +82,7 @@ def app():
         reg = LinearRegression(lr=learning_rate, n_iters=num_iteration)
 
         # Fit the linear regression model to the training data
-        reg.fit(X, y)
+        reg.fit(X_train, y_train)
 
         # Make predictions on the test data
         prediction = reg.predict(X_test)
