@@ -1,18 +1,9 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
-def load_data():
-    file_name = "1m_interval_NG_2023-09-15_7d_period.csv"
-    folder_name = "Old_Datas"
-    path = folder_name + "/" + file_name
-    data = pd.read_csv(path)
-    return data
 
-
-def calculate_mse(data, coefficients):
+def calculate_polynomial_mse(data, coefficients):
     X = data['Numerical_Index_scaled'].values
     y_true = data['Close_scaled'].values
     y_pred = np.zeros_like(X)
@@ -76,35 +67,34 @@ def plot_data_and_regression(data, coefficients):
     plt.show()
 
 
+def plot_combined_regression(train_data, test_data, coefficients, m, q):
+    X_train = train_data['Numerical_Index_scaled'].values
+    y_pred_poly_train = np.zeros_like(X_train)
 
-def main():
-    try:
-        data = load_data()
-        print("Original Data:")
-        print(data)
+    X_test = test_data['Numerical_Index_scaled'].values
+    y_pred_poly_test = np.zeros_like(X_test)
 
-        data = feature_scaling(data)
-        print("Normalized Data:")
-        print(data)
+    for i, coeff in enumerate(coefficients):
+        y_pred_poly_train += coeff * X_train ** i
+        y_pred_poly_test += coeff * X_test ** i
 
-        train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
+    # Sort X and y_pred for plotting
+    sorted_indices_train = np.argsort(X_train)
+    X_train_sorted = X_train[sorted_indices_train]
+    y_pred_poly_train_sorted = y_pred_poly_train[sorted_indices_train]
 
-        degree = 16  # degree of the polynomial
-        coefficients = polynomial_regression(train_data, degree)
+    sorted_indices_test = np.argsort(X_test)
+    X_test_sorted = X_test[sorted_indices_test]
+    y_pred_poly_test_sorted = y_pred_poly_test[sorted_indices_test]
 
-        mse = calculate_mse(test_data, coefficients)
-        print("Mean Squared Error on Test Set:", mse)
+    # Plotting
+    plt.scatter(train_data['Numerical_Index_scaled'], train_data['Close_scaled'], color="lightblue", label="Training Data", s=1)
+    plt.scatter(test_data['Numerical_Index_scaled'], test_data['Close_scaled'], color="blue", label="Test Data", s=1)
+    plt.plot(X_train_sorted, y_pred_poly_train_sorted, color="red", label="Polynomial Regression")
+    plt.plot(train_data['Numerical_Index_scaled'], m * train_data['Numerical_Index_scaled'] + q, color="green", label="Linear Regression")
+    plt.xlabel("Normalized Numerical Index")
+    plt.ylabel("Normalized Close Price")
+    plt.title("Combined Regression")
+    plt.legend()
+    plt.show()
 
-        print("Training Data and Regression:")
-        plot_data_and_regression(train_data, coefficients)
-
-
-
-    except KeyboardInterrupt:
-        print("Task interrupted successfully")
-    except Exception as e:
-        print("Exception encountered:", e)
-
-
-if __name__ == '__main__':
-    main()
