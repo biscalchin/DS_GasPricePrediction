@@ -74,10 +74,6 @@ def forecaster():
         # Perform linear regression using gradient descent and get the slope (m) and intercept (q)
         m, q = gradient_descent(train_data, learning_rate, num_iterations)
 
-        # Print the final slope and intercept
-        print(f"Final slope (m): {m}")
-        print(f"Final intercept (q): {q}")
-
         # Calculate and print the Mean Squared Error on the test set for linear regression
         mse_linear = calculate_linear_mse(test_data, m, q)
         print(f"Mean Squared Error on Test Set for the linear regression is: {mse_linear}")
