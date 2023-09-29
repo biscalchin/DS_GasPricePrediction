@@ -15,18 +15,6 @@ def calculate_polynomial_mse(data, coefficients):
     return mse
 
 
-def feature_scaling(data):
-    # Create a numerical index column for scaling
-    data['Numerical_Index'] = range(len(data))
-
-    # Scale the 'Numerical_Index' and 'Close' columns
-    data['Numerical_Index_scaled'] = (data['Numerical_Index'] - data['Numerical_Index'].mean()) / data[
-        'Numerical_Index'].std()
-    data['Close_scaled'] = (data['Close'] - data['Close'].mean()) / data['Close'].std()
-
-    return data
-
-
 def polynomial_regression(data, degree):
     X = data['Numerical_Index_scaled'].values
     y = data['Close_scaled'].values

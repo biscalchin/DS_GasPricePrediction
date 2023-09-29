@@ -1,6 +1,10 @@
 # Import the necessary libraries
 import yfinance as yf  # For Yahoo Finance data retrieval
 import datetime as dt  # For working with date and time
+import threading
+import sys
+import time
+
 import warnings        # For silencing future warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 # Defining the resource to monitor - in this case, natural gas futures (NG=F)
@@ -51,12 +55,16 @@ def data_scraper():
         # Retrieve and save historical data based on user input
         data = NG.history(period=period, interval=interval)
         # launching the data cleaner
+        print("Data cleaning initiated. \n*** Data are now clean ***")
+
         data = data_cleaner(data)
-        print("Data cleaning terminated. \n*** Data are now clean ***")
+
         print(data)
         file_name = get_filename()
         print(f"Saving data to {file_name}...")
+
         save_to_csv(data, file_name)
+
         print("Operation Succeed!")
 
     # Handle KeyboardInterrupt to gracefully exit the program
@@ -84,3 +92,4 @@ def data_cleaner(resource):
     # Handle any other exception and print its message
     except Exception as e:
         print("Exception encountered:", e)
+
