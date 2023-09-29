@@ -59,32 +59,39 @@ def forecaster():
         data = load_data()
         print(data)
 
+        # Perform feature scaling on the data
         data = feature_scaling(data)
         print("Normalized Data:")
         print(data)
 
-        # Split the data into training and testing sets
+        # Split the data into training and testing sets using train_test_split
         train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
+        # Define learning rate and number of iterations for gradient descent
         learning_rate = 0.001
         num_iterations = 1000
+
+        # Perform linear regression using gradient descent and get the slope (m) and intercept (q)
         m, q = gradient_descent(train_data, learning_rate, num_iterations)
 
+        # Print the final slope and intercept
         print(f"Final slope (m): {m}")
         print(f"Final intercept (q): {q}")
 
-        # Calculate and print the Mean Squared Error on the test set
+        # Calculate and print the Mean Squared Error on the test set for linear regression
         mse_linear = calculate_linear_mse(test_data, m, q)
         print(f"Mean Squared Error on Test Set for the linear regression is: {mse_linear}")
 
+        # Perform polynomial regression with a degree of 16 and get the coefficients
         degree = 16  # degree of the polynomial
         coefficients = polynomial_regression(train_data, degree)
 
+        # Calculate and print the Mean Squared Error on the test set for polynomial regression
         mse_polynomial = calculate_polynomial_mse(test_data, coefficients)
         print(f"Mean Squared Error on Test Set for the polynomial regression is {mse_polynomial}")
 
+        # Plot both linear and polynomial regression models along with the data
         plot_combined_regression(train_data, test_data, coefficients, m, q)
-
 
     # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
@@ -95,5 +102,6 @@ def forecaster():
         print("Exception encountered:", e)
 
 
+# Run the forecaster function if the script is executed as the main module
 if __name__ == '__main__':
     forecaster()
