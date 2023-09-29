@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import mean_squared_error
-
+from progress_bar import *
 
 def calculate_polynomial_mse(data, coefficients):
     X = data['Numerical_Index_scaled'].values
@@ -24,6 +24,9 @@ def polynomial_regression(data, degree):
     B = np.zeros(degree + 1)
 
     for i in range(degree + 1):
+        # Call progress_bar function here to show the progress
+        progress_bar(i, degree)
+
         for j in range(degree + 1):
             A[i][j] = np.sum(X ** (i + j))
 
@@ -31,8 +34,10 @@ def polynomial_regression(data, degree):
 
     coefficients = np.linalg.solve(A, B)
 
-    return coefficients
+    # Print a new line after the progress bar is complete
+    print()
 
+    return coefficients
 
 def plot_data_and_regression(data, coefficients):
     X = data['Numerical_Index_scaled'].values

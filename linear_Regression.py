@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
-
+from progress_bar import *
 
 def feature_scaling(data):
     """
@@ -35,6 +35,9 @@ def gradient_descent(data, learning_rate, num_iterations):
     n = len(data)
 
     for i in range(num_iterations):
+        # Call progress_bar function here to show the progress
+        progress_bar(i, num_iterations)
+
         m_gradient = 0
         q_gradient = 0
 
@@ -50,6 +53,9 @@ def gradient_descent(data, learning_rate, num_iterations):
         # Update m and q using the gradients and the learning rate
         m -= learning_rate * m_gradient
         q -= learning_rate * q_gradient
+
+    # Print a new line after the progress bar is complete
+    print()
 
     return m, q
 

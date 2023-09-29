@@ -1,10 +1,7 @@
 # Import the necessary libraries
 import yfinance as yf  # For Yahoo Finance data retrieval
 import datetime as dt  # For working with date and time
-import threading
-import sys
-import time
-
+from progress_bar import *
 import warnings        # For silencing future warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 # Defining the resource to monitor - in this case, natural gas futures (NG=F)
