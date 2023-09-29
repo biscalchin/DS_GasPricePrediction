@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 
 def load_data():
     file_name = "1m_interval_NG_2023-09-15_7d_period.csv"
@@ -9,6 +10,18 @@ def load_data():
     path = folder_name + "/" + file_name
     data = pd.read_csv(path)
     return data
+
+
+def calculate_mse(data, coefficients):
+    X = data['Numerical_Index_scaled'].values
+    y_true = data['Close_scaled'].values
+    y_pred = np.zeros_like(X)
+
+    for i, coeff in enumerate(coefficients):
+        y_pred += coeff * X ** i
+
+    mse = mean_squared_error(y_true, y_pred)
+    return mse
 
 
 def feature_scaling(data):
@@ -49,13 +62,19 @@ def plot_data_and_regression(data, coefficients):
     for i, coeff in enumerate(coefficients):
         y_pred += coeff * X ** i
 
+    # Sort X and y_pred for plotting
+    sorted_indices = np.argsort(X)
+    X_sorted = X[sorted_indices]
+    y_pred_sorted = y_pred[sorted_indices]
+
     plt.scatter(data['Numerical_Index_scaled'], data['Close_scaled'], color="blue", label="Data")
-    plt.plot(data['Numerical_Index_scaled'], y_pred, color="red", label="Polynomial Regression")
+    plt.plot(X_sorted, y_pred_sorted, color="red", label="Polynomial Regression")
     plt.xlabel("Normalized Numerical Index")
     plt.ylabel("Normalized Close Price")
     plt.title("Polynomial Regression")
     plt.legend()
     plt.show()
+
 
 
 def main():
@@ -68,10 +87,18 @@ def main():
         print("Normalized Data:")
         print(data)
 
-        degree = 4  # degree of the polynomial
-        coefficients = polynomial_regression(data, degree)
+        train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
-        plot_data_and_regression(data, coefficients)
+        degree = 16  # degree of the polynomial
+        coefficients = polynomial_regression(train_data, degree)
+
+        mse = calculate_mse(test_data, coefficients)
+        print("Mean Squared Error on Test Set:", mse)
+
+        print("Training Data and Regression:")
+        plot_data_and_regression(train_data, coefficients)
+
+
 
     except KeyboardInterrupt:
         print("Task interrupted successfully")
