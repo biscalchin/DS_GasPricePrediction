@@ -99,10 +99,6 @@ def forecaster():
             print("Using CPU computation: Warning! Process will take longer...")
             m, q = gradient_descent(train_data, learning_rate, num_iterations)
 
-
-
-
-
         # Calculate and print the Mean Squared Error on the test set for linear regression
         print("Calculating Mean Squared Error for Linear Regression on Test Set...")
 
