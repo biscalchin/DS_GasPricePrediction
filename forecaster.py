@@ -3,23 +3,37 @@ import pandas as pd
 from data_scraper import *  # Import functions from data_scraper.py
 from linear_Regression import *
 from polinomial_Regression import *
+import time
+
+
+def calculate_accuracy(mse):
+    try:
+        accuracy = (1 - mse) * 100  # as per your script
+        return round(accuracy, 2)
+    except Exception as e:
+        print("Error in calculating accuracy: ", e)
+        return None
 
 
 # Define a function to load data
-def load_data():
+def load_data(choise=""):
     try:
         # Get the filename from the user using the get_filename function
         file_name = get_filename()
         # Read data from a CSV file into a Pandas DataFrame
         data = pd.read_csv(file_name)
         # Check if a previous session's data is found
-        print(f"{data} \nFound a previous session...")
-        choice = input("Would you like to use this data? (y/n)\n> ")
-        if choice == "y":
+        print(f"{data} \nFound data from a previous session.")
+        if choise == "":
+            choise = input("Would you like to use this data? (y/n)\n> ")
+
+        if choise == "y" or choise == "yes" or choise == "Y":
             return data  # Return the existing data
         else:
+            print("Collecting new datas...")
+            time.sleep(0.5)
             data_scraper()  # If 'n', scrape new data
-            return load_data()  # Recursively call load_data() to load the new data
+            return load_data("y")  # Recursively call load_data() to load the new data
 
     # Handle KeyboardInterrupt to exit gracefully
     except KeyboardInterrupt:
@@ -27,10 +41,9 @@ def load_data():
 
     # Handle other exceptions and print their messages
     except Exception as e:
-        print("Exception encountered:", e)
-        print("Couldn't find data from a previous session. \n Generating New Data")
+        print(f"Couldn't find data from a previous session.\n Extracting New Data")
         data_scraper()  # Scrape new data
-        return load_data()  # Recursively call load_data() to load the new data
+        return load_data("y")  # Recursively call load_data() to load the new data
 
 
 def get_float(string):
@@ -77,8 +90,17 @@ def forecaster():
 
         # Perform linear regression using gradient descent and get the slope (m) and intercept (q)
         print("Performing Linear Regression using Gradient Descent...")
+        try:
+            print("Trying to compute using CUDA GPU technology...")
+            m, q = gradient_descent_gpu(train_data, learning_rate, num_iterations)
+        except Exception as e:
+            print(e)
+            print("Unable to compute using parallelization.")
+            print("Using CPU computation: Warning! Process will take longer...")
+            m, q = gradient_descent(train_data, learning_rate, num_iterations)
 
-        m, q = gradient_descent(train_data, learning_rate, num_iterations)
+
+
 
 
         # Calculate and print the Mean Squared Error on the test set for linear regression
@@ -102,6 +124,14 @@ def forecaster():
 
         # Plot both linear and polynomial regression models along with the data
         print("Plotting Linear and Polynomial Regression Models along with the Data...")
+
+        # For Linear Regression
+        accuracy_linear = calculate_accuracy(mse_linear)
+        print(f"Linear regression prediction accuracy: {accuracy_linear}%")
+
+        # For Polynomial Regression
+        accuracy_polynomial = calculate_accuracy(mse_polynomial)
+        print(f"Polynomial regression prediction accuracy: {accuracy_polynomial}%")
 
         plot_combined_regression(train_data, test_data, coefficients, m, q)
 

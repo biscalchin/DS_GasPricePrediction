@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from progress_bar import *
+import cupy as cp
+
 
 def feature_scaling(data):
     """
@@ -58,6 +60,30 @@ def gradient_descent(data, learning_rate, num_iterations):
     print()
 
     return m, q
+
+
+def gradient_descent_gpu(data, learning_rate, num_iterations):
+    m = cp.zeros(1)
+    q = cp.zeros(1)
+    n = len(data)
+
+    x_data = cp.array(data['Numerical_Index_scaled'].tolist())
+    y_data = cp.array(data['Close_scaled'].tolist())
+
+    for i in range(num_iterations):
+        progress_bar(i + 1, num_iterations)
+
+        prediction = m * x_data + q
+        error = y_data - prediction
+
+        m_gradient = -(2 / n) * cp.sum(x_data * error)
+        q_gradient = -(2 / n) * cp.sum(error)
+
+        m -= learning_rate * m_gradient
+        q -= learning_rate * q_gradient
+
+    print()
+    return cp.asnumpy(m), cp.asnumpy(q)
 
 
 def plot_data_linear_regression(data, m, q):
