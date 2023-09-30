@@ -2,6 +2,8 @@
 import yfinance as yf  # For Yahoo Finance data retrieval
 import datetime as dt  # For working with date and time
 from progress_bar import *
+import pandas as pd
+import time
 import warnings        # For silencing future warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 # Defining the resource to monitor - in this case, natural gas futures (NG=F)
@@ -90,3 +92,53 @@ def data_cleaner(resource):
     except Exception as e:
         print("Exception encountered:", e)
 
+
+# Define a function to load data
+def load_data(choise=""):
+    try:
+        # Get the filename from the user using the get_filename function
+        file_name = get_filename()
+        # Read data from a CSV file into a Pandas DataFrame
+        data = pd.read_csv(file_name)
+        # Check if a previous session's data is found
+        print(f"{data} \nFound data from a previous session.")
+        if choise == "":
+            choise = input("Would you like to use this data? (y/n)\n> ")
+
+        if choise == "y" or choise == "yes" or choise == "Y":
+            return data  # Return the existing data
+        else:
+            print("Collecting new datas...")
+            time.sleep(0.5)
+            data_scraper()  # If 'n', scrape new data
+            return load_data("y")  # Recursively call load_data() to load the new data
+
+    # Handle KeyboardInterrupt to exit gracefully
+    except KeyboardInterrupt:
+        print("Task interrupted successfully")
+
+    # Handle other exceptions and print their messages
+    except Exception as e:
+        print(f"Couldn't find data from a previous session.\n Extracting New Data")
+        data_scraper()  # Scrape new data
+        return load_data("y")  # Recursively call load_data() to load the new data
+
+
+def get_float(string):
+    try:
+        n = input(string)
+        n = float(n)
+        return n
+    except Exception as e:
+        print("Error! Wrong number: Expected Float", e)
+        return get_float(string)
+
+
+def get_int(string):
+    try:
+        n = input(string)
+        n = int(n)
+        return n
+    except Exception as e:
+        print("Error! Wrong number: Expected Integer", e)
+        return get_int(string)
