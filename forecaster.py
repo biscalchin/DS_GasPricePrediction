@@ -78,16 +78,15 @@ def forecaster():
         plot_combined_regression(train_data, test_data, coefficients, m, q)
 
         # Decision Tree Regression
-        # Assumi che 'data' sia il DataFrame caricato e preelaborato
-        # Separazione delle feature e del target
+        # Separation of features and target
         X = data.drop('Close', axis=1).values  # Assumi che 'Close' sia il target
         y = data['Close'].values
 
-        # Divisione in set di addestramento e test
+        # Division into training and test sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # Creazione e addestramento del modello di regressione dell'albero decisionale
-        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=5)  # Puoi modificare questi parametri
+        # Creation and training of the decision tree regression model
+        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=5)  # Editable parameters (2,5) is optimal
         tree_regressor.fit(X_train, y_train)
 
         # Predizioni sui dati di test
