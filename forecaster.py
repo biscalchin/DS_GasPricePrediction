@@ -1,8 +1,7 @@
-from sklearn.model_selection import train_test_split
 from data_scraper import *  # Import functions from data_scraper.py
 from linear_Regression import *
 from polinomial_Regression import *
-from decision_tree_regression import *
+from random_forest import *
 
 
 def calculate_accuracy(mse):
@@ -94,7 +93,7 @@ def forecaster():
 
         # Calcolo dell'errore quadratico medio (MSE)
         mse = mean_squared_error(y_test, y_pred)
-        print(f"MSE: {mse}")
+        print(f"Decision Tree MSE: {mse}")
 
         plt.figure(figsize=(10, 6))
         plt.scatter(X_test[:, 0], y_test, color='blue', label='Real Data',
@@ -108,6 +107,15 @@ def forecaster():
 
         # Chiamata della funzione plot_decision_tree_regression
         plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
+
+        # Creazione e addestramento del modello della foresta casuale
+        random_forest = RandomForestRegressor(n_estimators=10, min_samples_split=2, max_depth=2)
+        random_forest.fit(X_train, y_train)
+
+        # Predizioni e valutazione del modello
+        y_pred = random_forest.predict(X_test)
+        mse = mean_squared_error(y_test, y_pred)
+        print(f"Random Forest MSE: {mse}")
 
 
 
