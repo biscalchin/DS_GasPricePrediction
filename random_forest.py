@@ -1,7 +1,5 @@
 from decision_tree_regression import *
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
 
 
 class RandomForestRegressor:
@@ -34,3 +32,58 @@ class RandomForestRegressor:
         return X[indices], y[indices]
 
 
+def plot_combined_regression_with_random_forest(train_data, test_data, coefficients, m, q, tree_regressor, forest_regressor):
+    """
+    Plots the results of linear, polynomial, decision tree, and random forest regressions on the training and test data.
+    """
+    # Preparazione dei dati per il plotting
+    X_train = train_data['Numerical_Index_scaled'].values
+    X_test = test_data['Numerical_Index_scaled'].values
+
+    # Calcoli per la regressione polinomiale
+    y_pred_poly_train = sum(coeff * X_train ** i for i, coeff in enumerate(coefficients))
+    y_pred_poly_test = sum(coeff * X_test ** i for i, coeff in enumerate(coefficients))
+
+    # Calcoli per la regressione lineare
+    y_pred_linear_train = m * X_train + q
+    y_pred_linear_test = m * X_test + q
+
+
+    print("1")
+    # Predizioni con l'albero decisionale
+    y_pred_tree_test = tree_regressor.predict(X_test.reshape(-1, 1))
+    print("2")
+    print(f"{forest_regressor}")
+    print(f"{X_test.reshape(-1, 1)}")
+    # Predizioni con la foresta casuale
+    print("Dimensioni di X_test prima del reshape:", X_test.shape)
+    X_test_reshaped = X_test.reshape(-1, 1)
+    print("Dimensioni di X_test dopo il reshape:", X_test_reshaped.shape)
+    print("Primi 5 elementi di X_test dopo il reshape:", X_test_reshaped[:5])
+    for i, tree in enumerate(forest_regressor.trees):
+        single_tree_pred = tree.predict(X_test_reshaped)
+        print(f"Previsioni dell'albero {i}: {single_tree_pred[:5]}")
+
+    y_pred_forest_test = forest_regressor.predict(X_test_reshaped)
+    print("Previsioni della Foresta Casuale:", y_pred_forest_test[:5])
+
+    y_pred_forest_test = forest_regressor.predict(X_test.reshape(-1, 1))
+    print("3")
+    # Ordinamento degli indici per il plotting
+    sorted_indices = np.argsort(X_test)
+    print("4")
+    X_test_sorted = X_test[sorted_indices]
+    print("5")
+    # Plotting
+    plt.figure(figsize=(12, 8))
+    plt.scatter(train_data['Numerical_Index_scaled'], train_data['Close_scaled'], color="lightblue", label="Training Data", s=1)
+    plt.scatter(test_data['Numerical_Index_scaled'], test_data['Close_scaled'], color="blue", label="Test Data", s=1)
+    plt.plot(X_test_sorted, y_pred_poly_test[sorted_indices], color="red", label="Polynomial Regression")
+    plt.plot(X_train, y_pred_linear_train, color="green", label="Linear Regression")
+    plt.plot(X_test_sorted, y_pred_tree_test[sorted_indices], color='purple', label='Decision Tree Regression')
+    plt.plot(X_test_sorted, y_pred_forest_test[sorted_indices], color='orange', label='Random Forest Regression')
+    plt.xlabel("Normalized Numerical Index")
+    plt.ylabel("Normalized Close Price")
+    plt.title("Combined Regression Models")
+    plt.legend()
+    plt.show()

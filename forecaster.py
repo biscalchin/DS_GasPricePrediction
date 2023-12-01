@@ -2,6 +2,9 @@ from data_scraper import *  # Import functions from data_scraper.py
 from linear_Regression import *
 from polinomial_Regression import *
 from random_forest import *
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+
 
 
 def calculate_accuracy(mse):
@@ -116,8 +119,7 @@ def forecaster():
         y_pred = random_forest.predict(X_test)
         mse = mean_squared_error(y_test, y_pred)
         print(f"Random Forest MSE: {mse}")
-
-
+        plot_combined_regression_with_random_forest(train_data, test_data, coefficients, m, q, tree_regressor, random_forest)
 
 
     # Handle KeyboardInterrupt to gracefully exit the program
