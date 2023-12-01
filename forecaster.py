@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from data_scraper import *  # Import functions from data_scraper.py
 from linear_Regression import *
 from polinomial_Regression import *
+from decision_tree_regression import *
 
 
 def calculate_accuracy(mse):
@@ -15,7 +16,6 @@ def calculate_accuracy(mse):
 
 def forecaster():
     try:
-
         # Load data using the load_data function
         print("Loading Data...")
         data = load_data()
@@ -76,6 +76,42 @@ def forecaster():
         # Plot both linear and polynomial regression models along with the data
         print("Plotting Linear and Polynomial Regression Models along with the Data...")
         plot_combined_regression(train_data, test_data, coefficients, m, q)
+
+        # Decision Tree Regression
+        # Assumi che 'data' sia il DataFrame caricato e preelaborato
+        # Separazione delle feature e del target
+        X = data.drop('Close', axis=1).values  # Assumi che 'Close' sia il target
+        y = data['Close'].values
+
+        # Divisione in set di addestramento e test
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Creazione e addestramento del modello di regressione dell'albero decisionale
+        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=5)  # Puoi modificare questi parametri
+        tree_regressor.fit(X_train, y_train)
+
+        # Predizioni sui dati di test
+        y_pred = tree_regressor.predict(X_test)
+
+        # Calcolo dell'errore quadratico medio (MSE)
+        mse = mean_squared_error(y_test, y_pred)
+        print(f"MSE: {mse}")
+
+        plt.figure(figsize=(10, 6))
+        plt.scatter(X_test[:, 0], y_test, color='blue', label='Real Data',
+                    alpha=0.5)  # Assumi che X_test[:, 0] sia una variabile significativa
+        plt.scatter(X_test[:, 0], y_pred, color='red', label='Prediction', alpha=0.25)
+        plt.title("Regression with decision Tree")
+        plt.xlabel("Feature")
+        plt.ylabel("Close")
+        plt.legend()
+        plt.show()
+
+        # Chiamata della funzione plot_decision_tree_regression
+        plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
+
+
+
 
     # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
