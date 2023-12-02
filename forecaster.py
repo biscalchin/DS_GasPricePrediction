@@ -115,35 +115,41 @@ def forecaster():
         # Chiamata della funzione plot_decision_tree_regression
         plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
 
+        try:
+            print("\n\nPerforming ANN Regression...")
+            data = (data - data.mean()) / data.std()
+            # Separazione delle caratteristiche e del target
+            X = data.drop('Close', axis=1).values  # Assumendo che 'Close' sia il target
+            y = data['Close'].values.reshape(-1, 1)  # Reshape y per adattarlo alle dimensioni attese dall'ANN
 
-        print("\n\nPerforming ANN Regression...")
-        data = (data - data.mean()) / data.std()
-        # Separazione delle caratteristiche e del target
-        X = data.drop('Close', axis=1).values  # Assumendo che 'Close' sia il target
-        y = data['Close'].values.reshape(-1, 1)  # Reshape y per adattarlo alle dimensioni attese dall'ANN
-
-        # Divisione in set di addestramento e test
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-
-        # Definizione delle dimensioni della rete neurale
-        input_size = X_train.shape[1]  # Numero di caratteristiche
-        hidden_sizes = [20, 10, 5]  # Dimensioni degli strati nascosti
-        output_size = 1  # Output size per la regressione
-
-        # Inizializzazione e addestramento dell'ANN
-        ann_model = ImprovedNeuralNetwork([input_size] + hidden_sizes + [output_size], learning_rate=0.0015, epochs=8000)
-        ann_model.train(X_train, y_train)
-
-        # Valutazione dell'ANN
-        y_pred_ann = ann_model.predict(X_test)
-        mse_ann = mean_squared_error(y_test, y_pred_ann)
+            # Divisione in set di addestramento e test
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
-        # Visualizzazione opzionale
-        ann_model.plot_loss()
-        ann_model.plot_predictions(X_test, y_test)
+            # Definizione delle dimensioni della rete neurale
+            input_size = X_train.shape[1]  # Numero di caratteristiche
+            hidden_sizes = [20, 10, 5]  # Dimensioni degli strati nascosti
+            output_size = 1  # Output size per la regressione
 
+            # Inizializzazione e addestramento dell'ANN
+            ann_model = ImprovedNeuralNetwork([input_size] + hidden_sizes + [output_size], learning_rate=0.0015, epochs=8000)
+            ann_model.train(X_train, y_train)
+
+            # Valutazione dell'ANN
+            y_pred_ann = ann_model.predict(X_test)
+            mse_ann = mean_squared_error(y_test, y_pred_ann)
+
+
+            # Visualizzazione opzionale
+            ann_model.plot_loss()
+            ann_model.plot_predictions(X_test, y_test)
+
+        except Exception as e:
+            print("Exception encountered:", e)
+            print("Artificial Neural Network Critical Failure.")
+            print("Something went wrong in the data collection process.")
+            print("The yFinance API didn't provide valid data for the analysis.")
+            mse_ann = -1
 
         print("\n\nResults:")
         print(f"Linear Regression MSE: {mse_linear}")
