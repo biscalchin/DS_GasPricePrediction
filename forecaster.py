@@ -4,7 +4,7 @@ from polinomial_Regression import *
 from random_forest import *
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
-
+from artificial_neural_network import *
 
 
 def calculate_accuracy(mse):
@@ -21,6 +21,8 @@ def forecaster():
         # Load data using the load_data function
         print("Loading Data...")
         data = load_data()
+        data = data.fillna(data.mean())
+
         print(data)
 
         # Perform feature scaling on the data
@@ -103,7 +105,7 @@ def forecaster():
         print("Performing Random Forest Regression...")
 
         # Creazione e addestramento del modello della foresta casuale
-        random_forest = RandomForestRegressor(n_estimators=10, min_samples_split=2, max_depth=3)
+        random_forest = RandomForestRegressor(n_estimators=8, min_samples_split=2, max_depth=3)
         random_forest.fit(X_train, y_train)
 
         # Predizioni e valutazione del modello
@@ -113,11 +115,45 @@ def forecaster():
         # Chiamata della funzione plot_decision_tree_regression
         plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
 
+
+        print("Performing ANN Regression...")
+        data = (data - data.mean()) / data.std()
+        # Separazione delle caratteristiche e del target
+        X = data.drop('Close', axis=1).values  # Assumendo che 'Close' sia il target
+        y = data['Close'].values.reshape(-1, 1)  # Reshape y per adattarlo alle dimensioni attese dall'ANN
+
+        # Divisione in set di addestramento e test
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Stampa delle dimensioni per verifica
+        print(f"Dimensioni di X_train: {X_train.shape}")  # Diagnostica
+        print(f"Dimensioni di y_train: {y_train.shape}")  # Diagnostica
+
+        # Definizione delle dimensioni della rete neurale
+        input_size = X_train.shape[1]  # Numero di caratteristiche
+        hidden_sizes = [20, 10, 5]  # Dimensioni degli strati nascosti
+        output_size = 1  # Output size per la regressione
+
+        # Inizializzazione e addestramento dell'ANN
+        ann_model = ImprovedNeuralNetwork([input_size] + hidden_sizes + [output_size], learning_rate=0.001, epochs=5000)
+        ann_model.train(X_train, y_train)
+
+        # Valutazione dell'ANN
+        y_pred_ann = ann_model.predict(X_test)
+        mse_ann = mean_squared_error(y_test, y_pred_ann)
+        print(f"ANN Regression MSE: {mse_ann}")
+
+        # Visualizzazione opzionale
+        ann_model.plot_loss()
+        ann_model.plot_predictions(X_test, y_test)
+
+
         print("Results:")
         print(f"Linear Regression MSE: {mse_linear}")
         print(f"Polynomial Regression MSE: {mse_polynomial}")
         print(f"Decision Tree MSE: {mse_tree}")
         print(f"Random Forest MSE: {mse_forest}")
+        print(f"ANN Regression MSE: {mse_ann}")
 
 
     # Handle KeyboardInterrupt to gracefully exit the program
