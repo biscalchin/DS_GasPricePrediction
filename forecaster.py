@@ -110,15 +110,14 @@ def forecaster():
         y_pred_forest = random_forest.predict(X_test)
         mse_forest = mean_squared_error(y_test, y_pred_forest)
 
-        print("Results:")
+        # Chiamata della funzione plot_decision_tree_regression
+        plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
 
+        print("Results:")
         print(f"Linear Regression MSE: {mse_linear}")
         print(f"Polynomial Regression MSE: {mse_polynomial}")
         print(f"Decision Tree MSE: {mse_tree}")
         print(f"Random Forest MSE: {mse_forest}")
-
-        # Chiamata della funzione plot_decision_tree_regression
-        plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
 
 
     # Handle KeyboardInterrupt to gracefully exit the program
