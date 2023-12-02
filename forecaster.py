@@ -141,14 +141,14 @@ def forecaster():
         # Valutazione dell'ANN
         y_pred_ann = ann_model.predict(X_test)
         mse_ann = mean_squared_error(y_test, y_pred_ann)
-        print(f"ANN Regression MSE: {mse_ann}")
+
 
         # Visualizzazione opzionale
         ann_model.plot_loss()
         ann_model.plot_predictions(X_test, y_test)
 
 
-        print("Results:")
+        print("\n\nResults:")
         print(f"Linear Regression MSE: {mse_linear}")
         print(f"Polynomial Regression MSE: {mse_polynomial}")
         print(f"Decision Tree MSE: {mse_tree}")
