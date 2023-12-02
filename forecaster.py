@@ -81,7 +81,7 @@ def forecaster():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Creation and training of the decision tree regression model
-        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=4)  # Editable parameters (2,5) is optimal
+        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=3)  # Editable parameters (2,5) is optimal
         tree_regressor.fit(X_train, y_train)
 
         # Predizioni sui dati di test
@@ -132,7 +132,7 @@ def forecaster():
         output_size = 1  # Output size per la regressione
 
         # Inizializzazione e addestramento dell'ANN
-        ann_model = ImprovedNeuralNetwork([input_size] + hidden_sizes + [output_size], learning_rate=0.0015, epochs=10000)
+        ann_model = ImprovedNeuralNetwork([input_size] + hidden_sizes + [output_size], learning_rate=0.0015, epochs=8000)
         ann_model.train(X_train, y_train)
 
         # Valutazione dell'ANN
