@@ -99,8 +99,8 @@ class ImprovedNeuralNetwork:
     def plot_predictions(self, X, y):
         y_pred = self.predict(X)
         plt.figure()
-        plt.scatter(X[:, 0], y, label='True Data')
-        plt.scatter(X[:, 0], y_pred, label='Predictions', color='r')
+        plt.scatter(X[:, 0], y, label='True Data', color='blue', alpha=0.25)
+        plt.scatter(X[:, 0], y_pred, label='Predictions', color='r', alpha=0.25)
         plt.title('True Data vs Neural Network Predictions')
         plt.xlabel('Input Features')
         plt.ylabel('Predicted Values')
