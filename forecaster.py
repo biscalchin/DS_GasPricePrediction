@@ -145,7 +145,7 @@ def forecaster():
             ann_model.plot_predictions(X_test, y_test)
 
         except Exception as e:
-            print("Exception encountered:", e)
+            print("\n\nException encountered:", e)
             print("Artificial Neural Network Critical Failure.")
             print("Something went wrong in the data collection process.")
             print("The yFinance API didn't provide valid data for the analysis.")
