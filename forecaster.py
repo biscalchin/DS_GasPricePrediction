@@ -53,8 +53,6 @@ def forecaster():
 
         mse_linear = calculate_linear_mse(test_data, m, q)
 
-        print(f"Mean Squared Error on Test Set for the linear regression is: {mse_linear}")
-
         # Perform polynomial regression with a degree of 16 and get the coefficients
         print("Performing Polynomial Regression...")
 
@@ -65,19 +63,12 @@ def forecaster():
         print("Calculating Mean Squared Error for Polynomial Regression on Test Set...")
 
         mse_polynomial = calculate_polynomial_mse(test_data, coefficients)
-        print(f"Mean Squared Error on Test Set for the polynomial regression is {mse_polynomial}")
 
-        # For Linear Regression
-        accuracy_linear = calculate_accuracy(mse_linear)
-        print(f"Linear regression prediction accuracy: {accuracy_linear}%")
-
-        # For Polynomial Regression
-        accuracy_polynomial = calculate_accuracy(mse_polynomial)
-        print(f"Polynomial regression prediction accuracy: {accuracy_polynomial}%")
+        print("Performing Decision Tree Regression...")
 
         # Plot both linear and polynomial regression models along with the data
-        print("Plotting Linear and Polynomial Regression Models along with the Data...")
-        plot_combined_regression(train_data, test_data, coefficients, m, q)
+        # print("Plotting Linear and Polynomial Regression Models along with the Data...")
+        # plot_combined_regression(train_data, test_data, coefficients, m, q)
 
         # Decision Tree Regression
         # Separation of features and target
@@ -95,11 +86,11 @@ def forecaster():
         y_pred_tree = tree_regressor.predict(X_test)
 
         # Calcolo dell'errore quadratico medio (MSE)
-        mse = mean_squared_error(y_test, y_pred_tree)
-        print(f"Decision Tree MSE: {mse}")
+        mse_tree = mean_squared_error(y_test, y_pred_tree)
 
 
-        plt.figure(figsize=(10, 6))
+
+        """plt.figure(figsize=(10, 6))
         plt.scatter(X_test[:, 0], y_test, color='blue', label='Real Data',
                     alpha=0.5)  # Assumi che X_test[:, 0] sia una variabile significativa
         plt.scatter(X_test[:, 0], y_pred_tree, color='red', label='Prediction', alpha=0.25)
@@ -107,10 +98,9 @@ def forecaster():
         plt.xlabel("Feature")
         plt.ylabel("Close")
         plt.legend()
-        plt.show()
+        plt.show()"""
 
-        # Chiamata della funzione plot_decision_tree_regression
-        plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
+        print("Performing Random Forest Regression...")
 
         # Creazione e addestramento del modello della foresta casuale
         random_forest = RandomForestRegressor(n_estimators=10, min_samples_split=2, max_depth=3)
@@ -118,15 +108,17 @@ def forecaster():
 
         # Predizioni e valutazione del modello
         y_pred_forest = random_forest.predict(X_test)
-        mse = mean_squared_error(y_test, y_pred_forest)
-        print(f"Random Forest MSE: {mse}")
+        mse_forest = mean_squared_error(y_test, y_pred_forest)
 
+        print("Results:")
 
+        print(f"Linear Regression MSE: {mse_linear}")
+        print(f"Polynomial Regression MSE: {mse_polynomial}")
+        print(f"Decision Tree MSE: {mse_tree}")
+        print(f"Random Forest MSE: {mse_forest}")
 
-
-
-
-
+        # Chiamata della funzione plot_decision_tree_regression
+        plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
 
 
     # Handle KeyboardInterrupt to gracefully exit the program
