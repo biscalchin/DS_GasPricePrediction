@@ -116,8 +116,13 @@ def forecaster():
         mse_forest = mean_squared_error(y_test, y_pred_forest)
         spinner_forest.stop()
         print("Forest completed")
+        graph_spinner = Spinner()
+        print("Plotting results...")
+        graph_spinner.start()
         # Chiamata della funzione plot_decision_tree_regression
         plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
+        graph_spinner.stop()
+
 
         try:
             print("\n\nPerforming ANN Regression...")
@@ -142,7 +147,6 @@ def forecaster():
             # Valutazione dell'ANN
             y_pred_ann = ann_model.predict(X_test)
             mse_ann = mean_squared_error(y_test, y_pred_ann)
-
 
             # Visualizzazione opzionale
             ann_model.plot_loss()
