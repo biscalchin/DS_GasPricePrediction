@@ -32,7 +32,6 @@ class DecisionTreeRegressor:
     def _build_tree(self, X, y, current_depth=0):
         """ Recursive Decision Tree Builder """
         num_samples, num_features = X.shape
-        progress_bar(current_depth, self.max_depth)
 
         # Stopping Criteria
         if num_samples >= self.min_samples_split and current_depth <= self.max_depth:
@@ -52,14 +51,11 @@ class DecisionTreeRegressor:
         best_split = {}
         min_error = float("inf")
         total_splits = num_features * len(np.unique(X))
-        current_split = 0
+
 
         # checks every feature and every possible threshold value
         for feature_index in range(num_features):
             for threshold in np.unique(X[:, feature_index]):
-                # Progress bar
-                current_split += 1
-                progress_bar(current_split, total_splits)
 
                 dataset_left, dataset_right = self._split_dataset(X, y, feature_index, threshold)
                 if len(dataset_left) > 0 and len(dataset_right) > 0:

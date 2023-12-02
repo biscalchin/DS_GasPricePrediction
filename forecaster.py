@@ -18,6 +18,8 @@ def calculate_accuracy(mse):
 
 def forecaster():
     try:
+        spinner_tree = Spinner()
+        spinner_forest = Spinner()
         # Load data using the load_data function
         print("Loading Data...")
         data = load_data()
@@ -67,6 +69,7 @@ def forecaster():
         mse_polynomial = calculate_polynomial_mse(test_data, coefficients)
 
         print("\nPerforming Decision Tree Regression...")
+        spinner_tree.start()
 
         # Plot both linear and polynomial regression models along with the data
         # print("Plotting Linear and Polynomial Regression Models along with the Data...")
@@ -89,8 +92,8 @@ def forecaster():
 
         # Calcolo dell'errore quadratico medio (MSE)
         mse_tree = mean_squared_error(y_test, y_pred_tree)
-
-
+        spinner_tree.stop()
+        print("Tree completed.")
 
         """plt.figure(figsize=(10, 6))
         plt.scatter(X_test[:, 0], y_test, color='blue', label='Real Data',
@@ -103,7 +106,7 @@ def forecaster():
         plt.show()"""
 
         print("\n\nPerforming Random Forest Regression...")
-
+        spinner_forest.start()
         # Creazione e addestramento del modello della foresta casuale
         random_forest = RandomForestRegressor(n_estimators=8, min_samples_split=2, max_depth=3)
         random_forest.fit(X_train, y_train)
@@ -111,7 +114,8 @@ def forecaster():
         # Predizioni e valutazione del modello
         y_pred_forest = random_forest.predict(X_test)
         mse_forest = mean_squared_error(y_test, y_pred_forest)
-
+        spinner_forest.stop()
+        print("Forest completed")
         # Chiamata della funzione plot_decision_tree_regression
         plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
 
