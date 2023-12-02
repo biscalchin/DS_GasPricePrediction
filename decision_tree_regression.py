@@ -107,7 +107,7 @@ class DecisionTreeRegressor:
             return self._predict_value(x, tree.right)
 
 
-def plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, regressor):
+def plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor):
     """
     Plots the results of linear, polynomial and decision tree regressions on the training and test data.
     """
@@ -135,8 +135,8 @@ def plot_combined_regression_with_decision_tree(train_data, test_data, coefficie
     y_pred_linear_test = m * test_data['Numerical_Index_scaled'] + q
 
     # Addestramento e predizione con l'albero decisionale
-    regressor.fit(X_train.reshape(-1, 1), train_data['Close_scaled'])
-    y_pred_tree_test = regressor.predict(X_test.reshape(-1, 1))
+    tree_regressor.fit(X_train.reshape(-1, 1), train_data['Close_scaled'])
+    y_pred_tree_test = tree_regressor.predict(X_test.reshape(-1, 1))
 
     # Ordinamento degli indici per il plotting della regressione ad albero
     sorted_indices_tree = np.argsort(X_test)
@@ -155,3 +155,4 @@ def plot_combined_regression_with_decision_tree(train_data, test_data, coefficie
     plt.title("Combined Regression Models")
     plt.legend()
     plt.show()
+

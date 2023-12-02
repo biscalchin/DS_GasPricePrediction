@@ -88,20 +88,21 @@ def forecaster():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Creation and training of the decision tree regression model
-        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=5)  # Editable parameters (2,5) is optimal
+        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=4)  # Editable parameters (2,5) is optimal
         tree_regressor.fit(X_train, y_train)
 
         # Predizioni sui dati di test
-        y_pred = tree_regressor.predict(X_test)
+        y_pred_tree = tree_regressor.predict(X_test)
 
         # Calcolo dell'errore quadratico medio (MSE)
-        mse = mean_squared_error(y_test, y_pred)
+        mse = mean_squared_error(y_test, y_pred_tree)
         print(f"Decision Tree MSE: {mse}")
+
 
         plt.figure(figsize=(10, 6))
         plt.scatter(X_test[:, 0], y_test, color='blue', label='Real Data',
                     alpha=0.5)  # Assumi che X_test[:, 0] sia una variabile significativa
-        plt.scatter(X_test[:, 0], y_pred, color='red', label='Prediction', alpha=0.25)
+        plt.scatter(X_test[:, 0], y_pred_tree, color='red', label='Prediction', alpha=0.25)
         plt.title("Regression with decision Tree")
         plt.xlabel("Feature")
         plt.ylabel("Close")
@@ -112,14 +113,20 @@ def forecaster():
         plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
 
         # Creazione e addestramento del modello della foresta casuale
-        random_forest = RandomForestRegressor(n_estimators=10, min_samples_split=2, max_depth=2)
+        random_forest = RandomForestRegressor(n_estimators=10, min_samples_split=2, max_depth=3)
         random_forest.fit(X_train, y_train)
 
         # Predizioni e valutazione del modello
-        y_pred = random_forest.predict(X_test)
-        mse = mean_squared_error(y_test, y_pred)
+        y_pred_forest = random_forest.predict(X_test)
+        mse = mean_squared_error(y_test, y_pred_forest)
         print(f"Random Forest MSE: {mse}")
-        plot_combined_regression_with_random_forest(train_data, test_data, coefficients, m, q, tree_regressor, random_forest)
+
+
+
+
+
+
+
 
 
     # Handle KeyboardInterrupt to gracefully exit the program
