@@ -135,7 +135,7 @@ def forecaster():
         output_size = 1  # Output size per la regressione
 
         # Inizializzazione e addestramento dell'ANN
-        ann_model = ImprovedNeuralNetwork([input_size] + hidden_sizes + [output_size], learning_rate=0.001, epochs=5000)
+        ann_model = ImprovedNeuralNetwork([input_size] + hidden_sizes + [output_size], learning_rate=0.0015, epochs=10000)
         ann_model.train(X_train, y_train)
 
         # Valutazione dell'ANN

@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-
+from progress_bar import *
 
 def relu(x):
     return np.maximum(0, x)
@@ -71,15 +71,16 @@ class ImprovedNeuralNetwork:
 
     def train(self, X, y):
         for epoch in range(self.epochs):
+            progress_bar(epoch + 1, self.epochs)
             zs, activations = self.forward(X)
             loss = mean_squared_error(y, activations[-1])
             self.loss_history.append(loss)
             nabla_w, nabla_b = self.backward(zs, activations, y)
             self.update_params(nabla_w, nabla_b)
 
-            if epoch % 100 == 0:
+            """if epoch % 100 == 0:
                 print(f'Epoch {epoch}, Loss: {loss}')
-
+"""
     def predict(self, X):
         _, activations = self.forward(X)
         return activations[-1]
