@@ -65,7 +65,6 @@ def forecaster():
         print("Splitting Data into Training and Testing Sets...")
         train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
-
         # Define learning rate and number of iterations for gradient descent
         learning_rate = 0.001
         num_iterations = 1000
@@ -110,6 +109,7 @@ def forecaster():
         auc_value = auc(fpr, tpr)
 
         # Plot the ROC curve
+        """
         plt.figure()
         plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'Linear Regression ROC (area = {auc_value:.2f})')
         plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
@@ -120,7 +120,7 @@ def forecaster():
         plt.title('ROC for Linear Regression')
         plt.legend(loc="lower right")
         plt.show()
-
+        """
         """
         END LINEAR REGRESSION
         """
@@ -157,15 +157,16 @@ def forecaster():
         binary_predictions = convert_to_binary(polynomial_pred, threshold)
 
         # Calculates the true positive and false positive for different thresholds
-        fpr, tpr, thresholds = roc_curve(test_data['Close_scaled'].apply(lambda x: 1 if x >= threshold else 0),
+        fpr_pr, tpr_pr, thresholds = roc_curve(test_data['Close_scaled'].apply(lambda x: 1 if x >= threshold else 0),
                                          binary_predictions)
 
         # Calculate Area Under the Curve (AUC)
-        auc_value = auc(fpr, tpr)
+        auc_value_pr = auc(fpr_pr, tpr_pr)
 
+        """
         # Plot the ROC curve
         plt.figure()
-        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'Polynomial Regression ROC curve (area = {auc_value:.2f})')
+        plt.plot(fpr_pr, tpr_pr, color='darkorange', lw=2, label=f'Polynomial Regression ROC curve (area = {auc_value_pr:.2f})')
         plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
@@ -174,7 +175,7 @@ def forecaster():
         plt.title('ROC for Polynomial Regression')
         plt.legend(loc="lower right")
         plt.show()
-
+        """
         """
         END POLYNOMIAL REGRESSION
         """
@@ -217,24 +218,26 @@ def forecaster():
         Plotting Decision Tree Regression ROC
         """
 
-        # Predizioni dell'albero decisionale
+        # Decision tree predictions
         y_pred_tree = tree_regressor.predict(X_test)
 
-        # Stabilisci una soglia per la classificazione
+        # Establish a threshold for classification
         threshold = np.mean(y_test)  # Ad esempio, la media dei valori reali in y_test
 
-        # Converti le predizioni in valori binari
+        # Convert predictions to binary values
         binary_predictions = convert_to_binary(y_pred_tree, threshold)
 
-        # Calcola il vero positivo e il falso positivo per diverse soglie
-        fpr, tpr, thresholds = roc_curve(y_test >= threshold, binary_predictions)
+        # Calculates the true positive and false positive for different thresholds
+        fpr_dt, tpr_dt, thresholds = roc_curve(y_test >= threshold, binary_predictions)
 
-        # Calcola l'Area Under the Curve (AUC)
-        auc_value = auc(fpr, tpr)
+        # Calculate Area Under the Curve (AUC)
+        auc_value_dt = auc(fpr_dt, tpr_dt)
 
-        # Plotta la curva ROC
+
+        # Plot the ROC curve
+        """
         plt.figure()
-        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'Tree Regression ROC curve (area = {auc_value:.2f})')
+        plt.plot(fpr_dt, tpr_dt, color='darkorange', lw=2, label=f'Tree Regression ROC curve (area = {auc_value_dt:.2f})')
         plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
@@ -243,7 +246,7 @@ def forecaster():
         plt.title('ROC for Decision Tree Regression')
         plt.legend(loc="lower right")
         plt.show()
-
+        """
         """
         END DECISION TREE REGRESSION
         """
@@ -266,6 +269,40 @@ def forecaster():
         print("Forest completed")
         stop_time_forest = time.time()
         execution_time_forest = stop_time_forest - start_time_forest
+
+        """
+        Plotting Random Forest Regression ROC 
+        """
+        # Predizioni della foresta casuale
+        y_pred_forest = random_forest.predict(X_test)
+
+        # Stabilisci una soglia per la classificazione
+        threshold = np.mean(y_test)  # Ad esempio, la media dei valori reali in y_test
+
+        # Converti le predizioni in valori binari
+        binary_predictions = convert_to_binary(y_pred_forest, threshold)
+
+        # Calcola il vero positivo e il falso positivo per diverse soglie
+        fpr_rf, tpr_rf, thresholds = roc_curve(y_test >= threshold, binary_predictions)
+
+        # Calcola l'Area Under the Curve (AUC)
+        auc_value_rf = auc(fpr_rf, tpr_rf)
+
+        """
+        # Plotta la curva ROC
+        plt.figure()
+        plt.plot(fpr_rf, tpr_rf, color='darkorange', lw=2, label=f'R_Forest Regression ROC curve (area = {auc_value_rf:.2f})')
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC for Random Forest Regression')
+        plt.legend(loc="lower right")
+        plt.show()
+        """
+
+
         """
         END RANDOM FOREST REGRESSION
         """
@@ -305,8 +342,91 @@ def forecaster():
             mse_ann = mean_squared_error(y_test, y_pred_ann)
 
             # Visualizzazione opzionale
-            ann_model.plot_loss()
-            ann_model.plot_predictions(X_test, y_test)
+            # ann_model.plot_loss()
+            # ann_model.plot_predictions(X_test, y_test)
+
+            """
+            Plotting ROC
+            """
+
+            # Predizioni dell'ANN
+            y_pred_ann = ann_model.predict(X_test)
+
+            # Trasforma le predizioni e i valori reali in un formato adatto
+            y_pred_ann_flat = y_pred_ann.flatten()
+            y_test_flat = y_test.flatten()
+
+            # Stabilisci una soglia per la classificazione
+            threshold = np.mean(y_test_flat)  # Ad esempio, la media dei valori reali in y_test_flat
+
+            # Converti le predizioni in valori binari
+            binary_predictions = convert_to_binary(y_pred_ann_flat, threshold)
+
+            # Calcola il vero positivo e il falso positivo per diverse soglie
+            fpr_ann, tpr_ann, thresholds = roc_curve(y_test_flat >= threshold, binary_predictions)
+
+            # Calcola l'Area Under the Curve (AUC)
+            auc_value_ann = auc(fpr_ann, tpr_ann)
+
+            """
+            # Plotta la curva ROC
+            plt.figure()
+            plt.plot(fpr_ann, tpr_ann, color='darkorange', lw=2, label=f'ROC curve (area = {auc_value_ann:.2f})')
+            plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.05])
+            plt.xlabel('False Positive Rate')
+            plt.ylabel('True Positive Rate')
+            plt.title('Receiver Operating Characteristic for ANN Regression')
+            plt.legend(loc="lower right")
+            plt.show()
+            """
+
+            """
+            Plt all together
+            """
+            print("Fino a qui ci siamo")
+            plt.figure(figsize=(10, 8))
+            print("1")
+            print(f"\nFpr Type: {type(fpr)}"
+                  f"\nTpr Type: {type(tpr)}"
+                  f"\nauc Type: {type(auc)}"
+                  f"\nFpr_pr Type: {type(fpr_pr)}"
+                  f"\nTpr_pr Type: {type(tpr_pr)}"
+                  f"\nauc_pr Type: {type(auc_value_pr)}"
+                  f"\nFpr_dt Type: {type(fpr_dt)}"
+                  f"\nTpr_dt Type: {type(tpr_dt)}"
+                  f"\nauc_dt Type: {type(auc_value_dt)}"
+                  f"\nFpr_rf Type: {type(fpr_rf)}"
+                  f"\nTpr_rf Type: {type(tpr_rf)}"
+                  f"\nauc_rf Type: {type(auc_value_rf)}"
+                  f"\nFpr_ann Type: {type(fpr_ann)}"
+                  f"\nTpr_ann Type: {type(tpr_ann)}"
+                  f"\nauc_ann Type: {type(auc_value_ann)}")
+            # Linear Regression ROC
+            plt.plot(fpr, tpr, color='blue', lw=2, label=f'Linear Regression (area = {auc_value:.2f})')
+            print("2")
+            # Polynomial Regression ROC
+            plt.plot(fpr_pr, tpr_pr, color='red', lw=2, label=f'Polynomial Regression (area = {auc_value_pr:.2f})')
+            print("3")
+            # Decision Tree Regression ROC
+            plt.plot(fpr_dt, tpr_dt, color='green', lw=2, label=f'Decision Tree Regression (area = {auc_value_dt:.2f})')
+            print("4")
+            # Random Forest Regression ROC
+            plt.plot(fpr_rf, tpr_rf, color='purple',linestyle="--", lw=2, label=f'Random Forest Regression (area = {auc_value_rf:.2f})')
+            print("5")
+            # ANN Regression ROC
+            plt.plot(fpr_ann, tpr_ann, color='orange', lw=2, label=f'ANN Regression (area = {auc_value_ann:.2f})')
+            print("6")
+            # Plot details
+            plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.05])
+            plt.xlabel('False Positive Rate')
+            plt.ylabel('True Positive Rate')
+            plt.title('Receiver Operating Characteristic for All Regressions')
+            plt.legend(loc="lower right")
+            plt.show()
 
         except Exception as e:
             print("\n\nException encountered:", e)
@@ -316,8 +436,13 @@ def forecaster():
             mse_ann = -1
         stop_time_ann = time.time()
         execution_time_ann = stop_time_ann - start_time_ann
+
         """
         END ARTIFICIAL NEURAL NETWORK
+        """
+
+        """
+        PRINT RESULT SECTION
         """
         print()
         print_section_header("Mean Square Error (MSE)")
