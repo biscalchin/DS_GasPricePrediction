@@ -8,6 +8,11 @@ This repository hosts an advanced natural gas price forecasting model, which com
 
 - Alberto Biscalchin
 - Adnane Soulaimani
+- 
+### Supervisors
+- Prof. Magnus Johnsson
+- Mahtab Jamali
+
 
 ## Methodology
 
