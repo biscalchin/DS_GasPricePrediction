@@ -4,6 +4,7 @@ from polinomial_Regression import *
 from random_forest import *
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import roc_curve, auc
 from artificial_neural_network import *
 import time
 
@@ -21,6 +22,21 @@ def print_section_header(title):
     print("\n" + "=" * 75)
     print(f" {title} ".center(75))
     print("=" * 75)
+
+
+# Converte le predizioni della regressione lineare in valori binari
+def convert_to_binary(predictions, threshold):
+    return [1 if pred >= threshold else 0 for pred in predictions]
+
+
+def polynomial_predictions(data, coefficients):
+    X = data['Numerical_Index_scaled'].values
+    y_pred = np.zeros_like(X)
+
+    for i, coeff in enumerate(coefficients):
+        y_pred += coeff * X ** i
+
+    return y_pred
 
 
 def forecaster():
@@ -72,6 +88,39 @@ def forecaster():
         stop_time_linear = time.time()
         execution_time_linear = stop_time_linear - start_time_linear
 
+        """ 
+        Performing ROC Graph 
+        """
+
+        # Calculates predictions for the test set
+        linear_predictions = m * test_data['Numerical_Index_scaled'] + q
+
+        # Establish a threshold for classification
+        threshold = test_data['Close_scaled'].mean()
+        # We use the average of the 'Close_scaled' values as the method for calculating the threshold.
+
+        # Convert predictions to binary values
+        binary_predictions = convert_to_binary(linear_predictions, threshold)
+
+        # Calculates the true positive and false positive for different thresholds
+        fpr, tpr, thresholds = roc_curve(test_data['Close_scaled'].apply(lambda x: 1 if x >= threshold else 0),
+                                         binary_predictions)
+
+        # Calculate Area Under the Curve (AUC)
+        auc_value = auc(fpr, tpr)
+
+        # Plot the ROC curve
+        plt.figure()
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'Linear Regression ROC (area = {auc_value:.2f})')
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC of Linear Regression')
+        plt.legend(loc="lower right")
+        plt.show()
+
         """
         END LINEAR REGRESSION
         """
@@ -93,6 +142,34 @@ def forecaster():
         mse_polynomial = calculate_polynomial_mse(test_data, coefficients)
         stop_time_poly = time.time()
         execution_time_poly = stop_time_poly - start_time_poly
+
+        # Calculates predictions for the test set
+        polynomial_pred = polynomial_predictions(test_data, coefficients)
+
+        # Establish a threshold for classification
+        threshold = test_data['Close_scaled'].mean()  # per esempio, la media dei valori 'Close_scaled'
+
+        # Convert predictions to binary values
+        binary_predictions = convert_to_binary(polynomial_pred, threshold)
+
+        # Calculates the true positive and false positive for different thresholds
+        fpr, tpr, thresholds = roc_curve(test_data['Close_scaled'].apply(lambda x: 1 if x >= threshold else 0),
+                                         binary_predictions)
+
+        # Calculate Area Under the Curve (AUC)
+        auc_value = auc(fpr, tpr)
+
+        # Plot the ROC curve
+        plt.figure()
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'Polynomial Regression ROC curve (area = {auc_value:.2f})')
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC of Polynomial Regression')
+        plt.legend(loc="lower right")
+        plt.show()
 
         """
         END POLYNOMIAL REGRESSION
