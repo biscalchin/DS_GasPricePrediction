@@ -382,6 +382,7 @@ def forecaster():
             plt.show()
             """
 
+
             """
             Plt all together
             """
