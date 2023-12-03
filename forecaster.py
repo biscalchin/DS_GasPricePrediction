@@ -117,7 +117,7 @@ def forecaster():
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('ROC of Linear Regression')
+        plt.title('ROC for Linear Regression')
         plt.legend(loc="lower right")
         plt.show()
 
@@ -143,6 +143,10 @@ def forecaster():
         stop_time_poly = time.time()
         execution_time_poly = stop_time_poly - start_time_poly
 
+        """
+        Plotting Polynomial ROC
+        """
+
         # Calculates predictions for the test set
         polynomial_pred = polynomial_predictions(test_data, coefficients)
 
@@ -167,7 +171,7 @@ def forecaster():
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('ROC of Polynomial Regression')
+        plt.title('ROC for Polynomial Regression')
         plt.legend(loc="lower right")
         plt.show()
 
@@ -208,6 +212,37 @@ def forecaster():
         print("Tree completed.")
         stop_time_tree = time.time()
         execution_time_tree = stop_time_tree - start_time_tree
+
+        """
+        Plotting Decision Tree Regression ROC
+        """
+
+        # Predizioni dell'albero decisionale
+        y_pred_tree = tree_regressor.predict(X_test)
+
+        # Stabilisci una soglia per la classificazione
+        threshold = np.mean(y_test)  # Ad esempio, la media dei valori reali in y_test
+
+        # Converti le predizioni in valori binari
+        binary_predictions = convert_to_binary(y_pred_tree, threshold)
+
+        # Calcola il vero positivo e il falso positivo per diverse soglie
+        fpr, tpr, thresholds = roc_curve(y_test >= threshold, binary_predictions)
+
+        # Calcola l'Area Under the Curve (AUC)
+        auc_value = auc(fpr, tpr)
+
+        # Plotta la curva ROC
+        plt.figure()
+        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'Tree Regression ROC curve (area = {auc_value:.2f})')
+        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC for Decision Tree Regression')
+        plt.legend(loc="lower right")
+        plt.show()
 
         """
         END DECISION TREE REGRESSION
