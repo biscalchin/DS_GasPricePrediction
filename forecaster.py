@@ -5,6 +5,7 @@ from random_forest import *
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from artificial_neural_network import *
+import time
 
 
 def calculate_accuracy(mse):
@@ -14,6 +15,12 @@ def calculate_accuracy(mse):
     except Exception as e:
         print("Error in calculating accuracy: ", e)
         return None
+
+
+def print_section_header(title):
+    print("\n" + "=" * 75)
+    print(f" {title} ".center(75))
+    print("=" * 75)
 
 
 def forecaster():
@@ -33,9 +40,15 @@ def forecaster():
         print("Normalized Data:")
         print(data)
 
+        """
+        START LINEAR REGRESSION
+        """
+
+        start_time_linear = time.time()
         # Split the data into training and testing sets using train_test_split
         print("Splitting Data into Training and Testing Sets...")
         train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
+
 
         # Define learning rate and number of iterations for gradient descent
         learning_rate = 0.001
@@ -56,7 +69,18 @@ def forecaster():
         print("Calculating Mean Squared Error for Linear Regression on Test Set...")
 
         mse_linear = calculate_linear_mse(test_data, m, q)
+        stop_time_linear = time.time()
+        execution_time_linear = stop_time_linear - start_time_linear
 
+        """
+        END LINEAR REGRESSION
+        """
+
+        """
+        START POLYNOMIAL REGRESSION
+        """
+
+        start_time_poly = time.time()
         # Perform polynomial regression with a degree of 16 and get the coefficients
         print("Performing Polynomial Regression...")
 
@@ -67,7 +91,18 @@ def forecaster():
         print("Calculating Mean Squared Error for Polynomial Regression on Test Set...")
 
         mse_polynomial = calculate_polynomial_mse(test_data, coefficients)
+        stop_time_poly = time.time()
+        execution_time_poly = stop_time_poly - start_time_poly
 
+        """
+        END POLYNOMIAL REGRESSION
+        """
+
+        """
+        START DECISION TREE REGRESSION
+        """
+
+        start_time_tree = time.time()
         print("\nPerforming Decision Tree Regression...")
         spinner_tree.start()
 
@@ -94,17 +129,18 @@ def forecaster():
         mse_tree = mean_squared_error(y_test, y_pred_tree)
         spinner_tree.stop()
         print("Tree completed.")
+        stop_time_tree = time.time()
+        execution_time_tree = stop_time_tree - start_time_tree
 
-        """plt.figure(figsize=(10, 6))
-        plt.scatter(X_test[:, 0], y_test, color='blue', label='Real Data',
-                    alpha=0.5)  # Assumi che X_test[:, 0] sia una variabile significativa
-        plt.scatter(X_test[:, 0], y_pred_tree, color='red', label='Prediction', alpha=0.25)
-        plt.title("Regression with decision Tree")
-        plt.xlabel("Feature")
-        plt.ylabel("Close")
-        plt.legend()
-        plt.show()"""
+        """
+        END DECISION TREE REGRESSION
+        """
 
+        """
+        START RANDOM FOREST REGRESSION
+        """
+
+        start_time_forest = time.time()
         print("\n\nPerforming Random Forest Regression...")
         spinner_forest.start()
         # Creazione e addestramento del modello della foresta casuale
@@ -116,6 +152,12 @@ def forecaster():
         mse_forest = mean_squared_error(y_test, y_pred_forest)
         spinner_forest.stop()
         print("Forest completed")
+        stop_time_forest = time.time()
+        execution_time_forest = stop_time_forest - start_time_forest
+        """
+        END RANDOM FOREST REGRESSION
+        """
+
         graph_spinner = Spinner()
         print("Plotting results...")
         graph_spinner.start()
@@ -123,7 +165,10 @@ def forecaster():
         plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)
         graph_spinner.stop()
 
-
+        """
+        START ARTIFICIAL NEURAL NETWORK
+        """
+        start_time_ann = time.time()
         try:
             print("\n\nPerforming ANN Regression...")
             data = (data - data.mean()) / data.std()
@@ -133,7 +178,6 @@ def forecaster():
 
             # Divisione in set di addestramento e test
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
 
             # Definizione delle dimensioni della rete neurale
             input_size = X_train.shape[1]  # Numero di caratteristiche
@@ -158,14 +202,28 @@ def forecaster():
             print("Something went wrong in the data collection process.")
             print("The yFinance API didn't provide valid data for the analysis.")
             mse_ann = -1
-
-        print("\n\nResults:")
+        stop_time_ann = time.time()
+        execution_time_ann = stop_time_ann - start_time_ann
+        """
+        END ARTIFICIAL NEURAL NETWORK
+        """
+        print()
+        print_section_header("Mean Square Error (MSE)")
+        print("")
         print(f"Linear Regression MSE: {mse_linear}")
         print(f"Polynomial Regression MSE: {mse_polynomial}")
         print(f"Decision Tree MSE: {mse_tree}")
         print(f"Random Forest MSE: {mse_forest}")
         print(f"ANN Regression MSE: {mse_ann}")
-        input("\n\nPress Enter to close the app.\n\n")
+        print_section_header("Execution Time")
+        print("")
+        print(f"Linear Regression Execution Time: {execution_time_linear} seconds")
+        print(f"Polynomial Regression Execution Time: {execution_time_poly} seconds")
+        print(f"Decision Tree Regression Execution Time: {execution_time_tree} seconds")
+        print(f"Random Forest Regression Execution Time: {execution_time_forest} seconds")
+        print(f"ANN Regression Execution Time: {execution_time_ann} seconds")
+
+        input("\n\nPress Enter to close the app.\n>")
 
     # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
@@ -179,3 +237,4 @@ def forecaster():
 # Run the forecaster function if the script is executed as the main module
 if __name__ == '__main__':
     forecaster()
+
