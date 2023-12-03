@@ -55,7 +55,6 @@ def data_scraper():
         data = NG.history(period=period, interval=interval)
         # launching the data cleaner
         print("Data cleaning initiated. \n*** Data are now clean ***")
-
         data = data_cleaner(data)
 
         print(data)

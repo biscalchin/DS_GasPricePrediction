@@ -459,4 +459,3 @@ def forecaster():
 # Run the forecaster function if the script is executed as the main module
 if __name__ == '__main__':
     forecaster()
-

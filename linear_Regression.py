@@ -99,4 +99,3 @@ def calculate_linear_mse(data, m, q):
     predictions = m * data['Numerical_Index_scaled'] + q
     mse = mean_squared_error(data['Close_scaled'], predictions)
     return mse
-

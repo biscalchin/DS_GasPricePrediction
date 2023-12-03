@@ -104,7 +104,6 @@ def plot_combined_regression_v2(train_data, test_data, coefficients, m, q, y_pre
     sorted_indices_train = np.argsort(X_train)
     X_train_sorted = X_train[sorted_indices_train]
     y_pred_poly_train_sorted = y_pred_poly_train[sorted_indices_train]
-
     sorted_indices_test = np.argsort(X_test)
     X_test_sorted = X_test[sorted_indices_test]
     y_pred_poly_test_sorted = y_pred_poly_test[sorted_indices_test]

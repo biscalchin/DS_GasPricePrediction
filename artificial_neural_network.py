@@ -110,4 +110,3 @@ class ImprovedNeuralNetwork:
         plt.ylabel('Predicted Values')
         plt.legend()
         plt.show()
-

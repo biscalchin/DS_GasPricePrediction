@@ -24,7 +24,6 @@ def progress_bar(progress, total, color=colorama.Fore.YELLOW):
     print(color + f"\r|{bar}| {percent:.2f}%" + reset, end="\r")
 
 
-
 class Spinner:
     def __init__(self, delay=0.1):
         self.spinner = itertools.cycle(['-', '/', '|', '\\'])

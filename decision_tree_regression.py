@@ -52,7 +52,6 @@ class DecisionTreeRegressor:
         min_error = float("inf")
         total_splits = num_features * len(np.unique(X))
 
-
         # checks every feature and every possible threshold value
         for feature_index in range(num_features):
             for threshold in np.unique(X[:, feature_index]):

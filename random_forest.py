@@ -48,7 +48,6 @@ def plot_combined_regression_with_random_forest(train_data, test_data, coefficie
     y_pred_linear_train = m * X_train + q
     y_pred_linear_test = m * X_test + q
 
-
     print("1")
     # Predizioni con l'albero decisionale
     y_pred_tree_test = tree_regressor.predict(X_test.reshape(-1, 1))
@@ -135,58 +134,6 @@ def plot_all_regression_notWorking(train_data, test_data, coefficients, m, q, y_
     plt.plot(X_test_sorted, y_pred_linear_test_sorted, color="green", label="Linear Regression")
     plt.plot(X_test_sorted, y_pred_tree_sorted, color='purple', label='Decision Tree Regression')
     plt.plot(X_test_sorted, y_pred_forest_sorted, color='orange', label='Random Forest Regression')
-    plt.xlabel("Normalized Numerical Index")
-    plt.ylabel("Normalized Close Price")
-    plt.title("Combined Regression Models")
-    plt.legend()
-    plt.show()
-
-
-
-def plot_all_regression(train_data, test_data, coefficients, m, q, y_pred_tree, y_pred_forest):
-    """
-    Plots all regression results on a single graph.
-    """
-    # Preparazione dei dati per il plotting
-    X_train = train_data['Numerical_Index_scaled'].values
-    X_test = test_data['Numerical_Index_scaled'].values
-    y_train = train_data['Close_scaled'].values
-    y_test = test_data['Close_scaled'].values
-
-    # Calcoli per la regressione polinomiale sui dati di addestramento e di test
-    y_pred_poly_train = np.zeros_like(X_train)
-    y_pred_poly_test = np.zeros_like(X_test)
-    for i, coeff in enumerate(coefficients):
-        y_pred_poly_train += coeff * X_train ** i
-        y_pred_poly_test += coeff * X_test ** i
-
-    # Calcoli per la regressione lineare
-    y_pred_linear_train = m * X_train + q
-    y_pred_linear_test = m * X_test + q
-
-    # Ordinamento degli indici per il plotting
-    sorted_indices_train = np.argsort(X_train)
-    sorted_indices_test = np.argsort(X_test)
-
-    # Assicurati che le dimensioni delle predizioni corrispondano
-    if len(X_test) != len(y_pred_tree) or len(X_test) != len(y_pred_forest):
-        print("Errore: le dimensioni delle predizioni non corrispondono con i dati di test.")
-        return
-
-    # Ordina le predizioni in base agli indici ordinati
-    y_pred_poly_train_sorted = y_pred_poly_train[sorted_indices_train]
-    y_pred_linear_train_sorted = y_pred_linear_train[sorted_indices_train]
-    y_pred_poly_test_sorted = y_pred_poly_test[sorted_indices_test]
-    y_pred_linear_test_sorted = y_pred_linear_test[sorted_indices_test]
-
-    # Plotting
-    plt.figure(figsize=(12, 8))
-    plt.scatter(X_train, y_train, color="lightblue", label="Training Data", s=1)
-    plt.scatter(X_test, y_test, color="blue", label="Test Data", s=1)
-    plt.plot(X_train[sorted_indices_train], y_pred_poly_train_sorted, color="red", label="Polynomial Regression")
-    plt.plot(X_train, y_pred_linear_train, color="green", label="Linear Regression")
-    plt.plot(X_test[sorted_indices_test], y_pred_tree, color='purple', label='Decision Tree Regression')
-    plt.plot(X_test[sorted_indices_test], y_pred_forest, color='orange', label='Random Forest Regression')
     plt.xlabel("Normalized Numerical Index")
     plt.ylabel("Normalized Close Price")
     plt.title("Combined Regression Models")
