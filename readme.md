@@ -1,41 +1,38 @@
-# Natural Gas Price Forecasting Model
+# Advanced Regression Techniques for Natural Gas Price Forecasting
 
 ## Abstract
 
-The goal of this project is to create a natural gas price forecasting model using five distinct regression techniques. Natural gas price, being a continuous variable, will be predicted using supervised regression algorithms. This project will explore and compare the following regression techniques: Linear Regression, Polynomial Regression, Decision Trees Regression, Random Forest Regression, and Artificial Neural Network Regression. The aim is to provide a comprehensive review of natural gas price forecasting methods and evaluate the performance of each algorithm.
+This repository hosts an advanced natural gas price forecasting model, which compares the efficacy of various regression techniques. Due to the continuous nature of commodity prices, we employ supervised regression algorithms to predict natural gas prices. This project not only offers a methodical comparison of diverse regression approaches—Linear Regression, Polynomial Regression, Decision Trees, Random Forest, and Artificial Neural Network Regression—but also evaluates their predictive performance in the context of market volatility and data complexity.
 
-## Authors
+## Contributors
 
 - Alberto Biscalchin
 - Adnane Soulaimani
 
 ## Methodology
 
-In this project, we will investigate five regression algorithms for predicting future natural gas prices:
+The project meticulously examines five regression algorithms, each with its unique capacity to interpret the historical data patterns of natural gas prices:
 
-1. **Linear Regression**: This model assumes a linear relationship between explanatory variables and natural gas prices and will serve as our baseline.
+1. **Linear Regression**: Establishes a baseline for comparison by assuming a straightforward linear relationship between the predictors and the target variable.
+   
+2. **Polynomial Regression**: Introduces non-linear flexibility to capture complex relationships by extending the linear model with polynomial terms.
+   
+3. **Decision Trees Regression**: Segregates the predictor space into distinct regions, assigning constant predictive values to each, thus capturing local variations.
+   
+4. **Random Forest Regression**: Builds on the Decision Tree model, leveraging an ensemble to enhance predictions and mitigate overfitting.
+   
+5. **Artificial Neural Network Regression**: Implements a deep learning approach to decipher intricate non-linear dependencies.
 
-2. **Polynomial Regression**: Extending linear regression, this model introduces nonlinear terms to capture more complex relationships between variables.
+We utilize a dataset featuring historical natural gas prices and other relevant variables, partitioned into training and testing subsets to objectively assess each model's predictive prowess.
 
-3. **Decision Trees Regression**: This algorithm divides the explanatory variable space into homogeneous regions and assigns each region a constant value of the target variable.
+## Results and Insights
 
-4. **Random Forest Regression**: An evolution of decision trees regression, this model combines multiple decision trees into an ensemble model to provide robustness and resist overfitting.
+The project's findings reveal that model performance is highly data-sensitive, with Polynomial and Decision Tree Regressions demonstrating notable precision in capturing price movements. The Artificial Neural Network, despite facing implementation limitations for visual comparative analysis, displayed potent learning dynamics as evidenced by the loss reduction over epochs. Notably, Decision Tree Regression emerged as notably cost-effective considering its balance between accuracy and computational demand.
 
-5. **Artificial Neural Network Regression**: This approach employs deep neural networks to capture complex nonlinear relationships between explanatory variables and the price of natural gas.
+## Conclusions
 
-During the analysis, historical natural gas price data or other relevant variables will be used. The data will be split into a training set and a test set to evaluate the predictive performance of each algorithm.
+As students in the Master of Science in Data Science program, this project has been an integral component of our academic development, bridging theoretical knowledge with practical application. It has reinforced the criticality of selecting appropriate models tailored to data characteristics and has enriched our understanding of algorithmic efficacy in predictive scenarios.
 
-## Expected Results
+## Explore
 
-We anticipate that the performance of the various regression methods in predicting natural gas prices will vary. Here are our initial expectations:
-
-- **Polynomial Regression**: Preferred for more complex correlations.
-- **Linear Regression**: Beneficial for roughly linear relationships.
-- **Artificial Neural Networks**: Effective at handling extremely nonlinear relationships.
-- **Decision Trees and Random Forest**: Better at capturing oscillations and interactions in the data.
-
-## Preliminary Conclusions
-
-This project represents a valuable step in our journey to study machine learning principles as undergraduate students in the Master of Science in Data Science program. It allows us to apply theoretical insights learned during our courses in a practical setting by studying and comparing five regression models for forecasting natural gas prices. This experience will provide us with a solid foundation for understanding the importance of algorithm selection based on the nature of the data and forecasting targets as we continue to develop our Data Science skills. We are excited about the upcoming academic challenges and learning opportunities.
-
-Feel free to explore the code and results in this repository to gain insights into natural gas price forecasting using various regression techniques.
+We invite you to delve into the code and findings within this repository, which elucidate the intricacies of forecasting natural gas prices using cutting-edge regression techniques. Your insights and feedback are highly valued as we continue to refine our models and approaches.
