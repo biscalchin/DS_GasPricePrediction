@@ -385,39 +385,23 @@ def forecaster():
             """
             Plt all together
             """
-            print("Fino a qui ci siamo")
+
             plt.figure(figsize=(10, 8))
-            print("1")
-            print(f"\nFpr Type: {type(fpr)}"
-                  f"\nTpr Type: {type(tpr)}"
-                  f"\nauc Type: {type(auc)}"
-                  f"\nFpr_pr Type: {type(fpr_pr)}"
-                  f"\nTpr_pr Type: {type(tpr_pr)}"
-                  f"\nauc_pr Type: {type(auc_value_pr)}"
-                  f"\nFpr_dt Type: {type(fpr_dt)}"
-                  f"\nTpr_dt Type: {type(tpr_dt)}"
-                  f"\nauc_dt Type: {type(auc_value_dt)}"
-                  f"\nFpr_rf Type: {type(fpr_rf)}"
-                  f"\nTpr_rf Type: {type(tpr_rf)}"
-                  f"\nauc_rf Type: {type(auc_value_rf)}"
-                  f"\nFpr_ann Type: {type(fpr_ann)}"
-                  f"\nTpr_ann Type: {type(tpr_ann)}"
-                  f"\nauc_ann Type: {type(auc_value_ann)}")
             # Linear Regression ROC
             plt.plot(fpr, tpr, color='blue', lw=2, label=f'Linear Regression (area = {auc_value:.2f})')
-            print("2")
+
             # Polynomial Regression ROC
             plt.plot(fpr_pr, tpr_pr, color='red', lw=2, label=f'Polynomial Regression (area = {auc_value_pr:.2f})')
-            print("3")
+
             # Decision Tree Regression ROC
             plt.plot(fpr_dt, tpr_dt, color='green', lw=2, label=f'Decision Tree Regression (area = {auc_value_dt:.2f})')
-            print("4")
+
             # Random Forest Regression ROC
             plt.plot(fpr_rf, tpr_rf, color='purple',linestyle="--", lw=2, label=f'Random Forest Regression (area = {auc_value_rf:.2f})')
-            print("5")
+
             # ANN Regression ROC
             plt.plot(fpr_ann, tpr_ann, color='orange', lw=2, label=f'ANN Regression (area = {auc_value_ann:.2f})')
-            print("6")
+
             # Plot details
             plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
             plt.xlim([0.0, 1.0])
