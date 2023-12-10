@@ -17,22 +17,32 @@ def calculate_polynomial_mse(data, coefficients):
 
 
 def polynomial_regression(data, degree):
+    # Extract the scaled numerical index and the scaled closing values from the data
     X = data['Numerical_Index_scaled'].values
     y = data['Close_scaled'].values
+
+    # Initialize matrix A and vector B for the linear system of equations
     A = np.zeros((degree + 1, degree + 1))
     B = np.zeros(degree + 1)
 
     for i in range(degree + 1):
-        # Call progress_bar function here to show the progress
+        # Update the progress bar for each step in the outer loop
         progress_bar(i, degree)
         for j in range(degree + 1):
+            # Compute each element of matrix A as the sum of X raised to the power (i+j)
             A[i][j] = np.sum(X ** (i + j))
+        # Compute each element of vector B as the sum of X raised to the power i times y
         B[i] = np.sum(X ** i * y)
 
+    # Solve the linear system of equations A * coefficients = B to find the polynomial coefficients
     coefficients = np.linalg.solve(A, B)
-    # Print a new line after the progress bar is complete
+
+    # Print a new line for better readability after the progress bar is complete
     print()
+
+    # Return the calculated polynomial coefficients
     return coefficients
+
 
 
 def plot_data_and_regression(data, coefficients):
