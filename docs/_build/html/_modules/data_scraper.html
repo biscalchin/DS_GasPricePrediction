@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>data_scraper &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Gas Price Prediction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gas Price Prediction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">data_scraper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for data_scraper</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Import the necessary libraries</span>
+<span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>  <span class="c1"># For Yahoo Finance data retrieval</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>  <span class="c1"># For working with date and time</span>
+<span class="kn">from</span> <span class="nn">progress_bar</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">warnings</span>        <span class="c1"># For silencing future warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+<span class="c1"># Defining the resource to monitor - in this case, natural gas futures (NG=F)</span>
+<span class="n">resLabel</span> <span class="o">=</span> <span class="s2">&quot;NG=F&quot;</span>
+<span class="c1"># Define the object &#39;NG&#39; using the Ticker method from the Yahoo Finance API</span>
+<span class="n">NG</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">resLabel</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_filename">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.get_filename">[docs]</a>
+<span class="k">def</span> <span class="nf">get_filename</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a filename for saving CSV data.</span>
+
+<span class="sd">    The filename is in the format &#39;NG_{current_date}.csv&#39;, where {current_date} is today&#39;s date.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - A string representing the generated filename.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">today</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>  <span class="c1"># Get the current date</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;NG_</span><span class="si">{</span><span class="n">today</span><span class="si">}</span><span class="s2">.csv&quot;</span>  <span class="c1"># Return the formatted filename</span></div>
+
+
+
+<div class="viewcode-block" id="save_to_csv">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.save_to_csv">[docs]</a>
+<span class="k">def</span> <span class="nf">save_to_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes a pandas DataFrame to a CSV file.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - data: The pandas DataFrame to be written to the CSV.</span>
+<span class="sd">    - filename: The name of the file to save the data to.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Save the DataFrame to a CSV file without including row indices</span></div>
+
+
+
+<div class="viewcode-block" id="get_period">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.get_period">[docs]</a>
+<span class="k">def</span> <span class="nf">get_period</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="s2">&quot;1m&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines the data retrieval period based on the specified interval.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - interval: A string indicating the time interval (default is &quot;1m&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - A string representing the data retrieval period.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">interval</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span> <span class="ow">or</span> <span class="n">interval</span> <span class="o">==</span> <span class="s2">&quot;1m&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;7d&quot;</span>  <span class="c1"># If the interval is 1 minute, return a period of 7 days</span>
+    <span class="k">elif</span> <span class="n">interval</span> <span class="o">==</span> <span class="s2">&quot;5m&quot;</span> <span class="ow">or</span> <span class="n">interval</span> <span class="o">==</span> <span class="s2">&quot;5&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;60d&quot;</span>  <span class="c1"># If the interval is 5 minutes, return a period of 60 days</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown Error occurred!</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_interval">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.get_interval">[docs]</a>
+<span class="k">def</span> <span class="nf">get_interval</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prompts the user to choose a data retrieval interval.</span>
+
+<span class="sd">    Validates the user&#39;s input and only accepts specific values (&quot;1m&quot;, &quot;5m&quot;, etc.).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - A string representing the user&#39;s choice of interval.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Choose the interval:</span><span class="se">\n</span><span class="s2">1. 1m</span><span class="se">\n</span><span class="s2">2. 5m</span><span class="se">\n</span><span class="s2">&gt;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">interval</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;1m&quot;</span><span class="p">,</span> <span class="s2">&quot;1min&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="s2">&quot;1m&quot;</span>  <span class="c1"># Return &quot;1m&quot; if the user selects a 1-minute interval</span>
+        <span class="k">elif</span> <span class="n">interval</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;5min&quot;</span><span class="p">,</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="s2">&quot;5m&quot;</span>  <span class="c1"># Return &quot;5m&quot; if the user selects a 5-minute interval</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Invalid Choice!</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="data_scraper">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.data_scraper">[docs]</a>
+<span class="k">def</span> <span class="nf">data_scraper</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The main function to retrieve, clean, and save data.</span>
+
+<span class="sd">    It handles user input for the interval and period, retrieves and cleans the data,</span>
+<span class="sd">    and then saves it to a CSV file. It also handles exceptions and keyboard interrupts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="n">get_interval</span><span class="p">()</span>  <span class="c1"># Get interval from user</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="n">get_period</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>  <span class="c1"># Determine the period based on interval</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">NG</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>  <span class="c1"># Retrieve data</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data cleaning initiated. </span><span class="se">\n</span><span class="s2">*** Data are now clean ***&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data_cleaner</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># Clean the retrieved data</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_filename</span><span class="p">()</span>  <span class="c1"># Generate filename for saving</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving data to </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="n">save_to_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>  <span class="c1"># Save data to CSV</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Operation Succeed!&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task finished successfully&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception encountered:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="data_cleaner">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.data_cleaner">[docs]</a>
+<span class="k">def</span> <span class="nf">data_cleaner</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cleans the provided data resource by dropping specific columns.</span>
+
+<span class="sd">    Rounds the &#39;Close&#39; values to 4 decimal places and drops unnecessary columns.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - resource: The pandas DataFrame to be cleaned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - The cleaned DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cleaning...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dropping useless columns...&quot;</span><span class="p">)</span>
+        <span class="n">resource</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;Dividends&quot;</span><span class="p">,</span> <span class="s2">&quot;Stock Splits&quot;</span><span class="p">,</span> <span class="s2">&quot;Low&quot;</span><span class="p">,</span> <span class="s2">&quot;High&quot;</span><span class="p">,</span> <span class="s2">&quot;Open&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Drop specified columns</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Operation Succeed!&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">resource</span><span class="p">)):</span>
+            <span class="n">resource</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;Close&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">resource</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># Round &#39;Close&#39; values to 4 decimal places</span>
+        <span class="k">return</span> <span class="n">resource</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task finished successfully&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception encountered:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_data">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.load_data">[docs]</a>
+<span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">choice</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads data from a CSV file, offering the user the choice to use existing data or scrape new data.</span>
+
+<span class="sd">    If existing data is found, the user is asked whether to use it or to scrape new data.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - choice: An optional string to bypass user input (useful for recursive calls).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - A pandas DataFrame with the loaded data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_filename</span><span class="p">()</span>  <span class="c1"># Generate filename for loading</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>  <span class="c1"># Read data from the CSV file</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">Found data from a previous session.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Would you like to use this data? (y/n)</span><span class="se">\n</span><span class="s2">&gt; &quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">data</span>  <span class="c1"># Return existing data if user chooses so</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Collecting new data...&quot;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+            <span class="n">data_scraper</span><span class="p">()</span>  <span class="c1"># Scrape new data if user chooses so</span>
+            <span class="k">return</span> <span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>  <span class="c1"># Load the new data</span>
+
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task interrupted successfully&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find data from a previous session.</span><span class="se">\n</span><span class="s2">Extracting New Data&quot;</span><span class="p">)</span>
+        <span class="n">data_scraper</span><span class="p">()</span>  <span class="c1"># Scrape new data in case of exception</span>
+        <span class="k">return</span> <span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>  <span class="c1"># Load the new data</span></div>
+
+
+
+<div class="viewcode-block" id="get_float">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.get_float">[docs]</a>
+<span class="k">def</span> <span class="nf">get_float</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prompts the user to enter a floating-point number and validates the input.</span>
+
+<span class="sd">    If the input is not a valid float, the function recursively prompts again.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - string: The prompt string to be displayed to the user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - A floating-point number entered by the user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error! Wrong number: Expected Float&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_float</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>  <span class="c1"># Recursive call for re-prompting the user</span></div>
+
+
+
+<div class="viewcode-block" id="get_int">
+<a class="viewcode-back" href="../data_scraper.html#data_scraper.get_int">[docs]</a>
+<span class="k">def</span> <span class="nf">get_int</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prompts the user to enter an integer and validates the input.</span>
+
+<span class="sd">    If the input is not a valid integer, the function recursively prompts again.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - string: The prompt string to be displayed to the user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - An integer entered by the user.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error! Wrong number: Expected Integer&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_int</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>  <span class="c1"># Recursive call for re-prompting the user</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alberto Biscalchin, Adnane Soulaimani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

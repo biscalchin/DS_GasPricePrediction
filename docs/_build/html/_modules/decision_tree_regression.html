@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>decision_tree_regression &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Gas Price Prediction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gas Price Prediction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">decision_tree_regression</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for decision_tree_regression</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">progress_bar</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="DecisionTreeNode">
+<a class="viewcode-back" href="../decision_tree_regression.html#decision_tree_regression.DecisionTreeNode">[docs]</a>
+<span class="k">class</span> <span class="nc">DecisionTreeNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Decision Tree Node &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a node in the decision tree.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - feature_index (int): Index of the feature used for splitting the data.</span>
+<span class="sd">        - threshold (float): The threshold value for splitting the data at the feature.</span>
+<span class="sd">        - left (DecisionTreeNode): The left child node (for values less than or equal to the threshold).</span>
+<span class="sd">        - right (DecisionTreeNode): The right child node (for values greater than the threshold).</span>
+<span class="sd">        - value (float): The predicted value if this is a leaf node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_index</span> <span class="o">=</span> <span class="n">feature_index</span>  <span class="c1"># Index of the feature to split on</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>  <span class="c1"># Threshold value for the split</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">left</span>  <span class="c1"># Left child</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">right</span>  <span class="c1"># Right child</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1"># Predicted value if it&#39;s a leaf node</span></div>
+
+
+<div class="viewcode-block" id="DecisionTreeRegressor">
+<a class="viewcode-back" href="../decision_tree_regression.html#decision_tree_regression.DecisionTreeRegressor">[docs]</a>
+<span class="k">class</span> <span class="nc">DecisionTreeRegressor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Base implementation of the regression using Decision Tree &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the DecisionTreeRegressor.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - min_samples_split (int): The minimum number of samples required to consider a split.</span>
+<span class="sd">        - max_depth (int): The maximum depth of the tree.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Root node of the decision tree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_split</span> <span class="o">=</span> <span class="n">min_samples_split</span>  <span class="c1"># Minimum number of samples to split</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>  <span class="c1"># Maximum depth of the tree</span>
+
+<div class="viewcode-block" id="DecisionTreeRegressor.fit">
+<a class="viewcode-back" href="../decision_tree_regression.html#decision_tree_regression.DecisionTreeRegressor.fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trains the Decision Tree on the provided dataset.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: Feature data for training.</span>
+<span class="sd">        - y: Target values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_tree</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># Start building the tree from the root</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_build_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">current_depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively builds the decision tree.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: The feature data for the current node.</span>
+<span class="sd">        - y: The target values for the current node.</span>
+<span class="sd">        - current_depth (int): The current depth in the tree.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - A DecisionTreeNode representing either an internal node or a leaf.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># Check stopping criteria</span>
+        <span class="k">if</span> <span class="n">num_samples</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_split</span> <span class="ow">and</span> <span class="n">current_depth</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">:</span>
+            <span class="c1"># Find the best split</span>
+            <span class="n">best_split</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_best_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">best_split</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Build the left and right subtrees recursively</span>
+                <span class="n">left_subtree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_tree</span><span class="p">(</span><span class="n">best_split</span><span class="p">[</span><span class="s2">&quot;dataset_left&quot;</span><span class="p">][:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">best_split</span><span class="p">[</span><span class="s2">&quot;dataset_left&quot;</span><span class="p">][:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">current_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">right_subtree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_tree</span><span class="p">(</span><span class="n">best_split</span><span class="p">[</span><span class="s2">&quot;dataset_right&quot;</span><span class="p">][:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">best_split</span><span class="p">[</span><span class="s2">&quot;dataset_right&quot;</span><span class="p">][:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">current_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">DecisionTreeNode</span><span class="p">(</span><span class="n">feature_index</span><span class="o">=</span><span class="n">best_split</span><span class="p">[</span><span class="s2">&quot;feature_index&quot;</span><span class="p">],</span> <span class="n">threshold</span><span class="o">=</span><span class="n">best_split</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="n">left_subtree</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">right_subtree</span><span class="p">)</span>
+
+        <span class="c1"># Create a leaf node</span>
+        <span class="k">return</span> <span class="n">DecisionTreeNode</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_get_best_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the best feature and threshold to split the data.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: Feature data.</span>
+<span class="sd">        - y: Target values.</span>
+<span class="sd">        - num_samples (int): The number of samples in the data.</span>
+<span class="sd">        - num_features (int): The number of features in the data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - A dictionary containing information about the best split.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">best_split</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">min_error</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">feature_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_features</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">feature_index</span><span class="p">]):</span>
+                <span class="n">dataset_left</span><span class="p">,</span> <span class="n">dataset_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_dataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">feature_index</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset_left</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset_right</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">y_left</span><span class="p">,</span> <span class="n">y_right</span> <span class="o">=</span> <span class="n">dataset_left</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dataset_right</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">current_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_mse</span><span class="p">(</span><span class="n">y_left</span><span class="p">,</span> <span class="n">y_right</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">current_error</span> <span class="o">&lt;</span> <span class="n">min_error</span><span class="p">:</span>
+                        <span class="n">min_error</span> <span class="o">=</span> <span class="n">current_error</span>
+                        <span class="n">best_split</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;feature_index&quot;</span><span class="p">:</span> <span class="n">feature_index</span><span class="p">,</span> <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="n">threshold</span><span class="p">,</span> <span class="s2">&quot;dataset_left&quot;</span><span class="p">:</span> <span class="n">dataset_left</span><span class="p">,</span> <span class="s2">&quot;dataset_right&quot;</span><span class="p">:</span> <span class="n">dataset_right</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">min_error</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">best_split</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_split_dataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">feature_index</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Splits the dataset based on the given feature and threshold.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: Feature data.</span>
+<span class="sd">        - y: Target values.</span>
+<span class="sd">        - feature_index (int): The index of the feature to split on.</span>
+<span class="sd">        - threshold (float): The value of the threshold for splitting.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - Two datasets corresponding to the left and right splits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">left_indices</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">feature_index</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">threshold</span>
+        <span class="n">right_indices</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">feature_index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+
+        <span class="n">dataset_left</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">left_indices</span><span class="p">]</span>
+        <span class="n">dataset_right</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">right_indices</span><span class="p">]</span>
+
+        <span class="n">y_left</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">left_indices</span><span class="p">]</span>
+        <span class="n">y_right</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">right_indices</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">dataset_left</span><span class="p">,</span> <span class="n">y_left</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">dataset_right</span><span class="p">,</span> <span class="n">y_right</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_calculate_mse</span><span class="p">(</span><span class="n">y_left</span><span class="p">,</span> <span class="n">y_right</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the mean squared error for a given split.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - y_left: Target values in the left split.</span>
+<span class="sd">        - y_right: Target values in the right split.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - The mean squared error of the split.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_left</span><span class="p">,</span> <span class="n">n_right</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_left</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_right</span><span class="p">)</span>
+        <span class="n">mse_left</span><span class="p">,</span> <span class="n">mse_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_left</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_left</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_right</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_right</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">n_left</span> <span class="o">*</span> <span class="n">mse_left</span> <span class="o">+</span> <span class="n">n_right</span> <span class="o">*</span> <span class="n">mse_right</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_left</span> <span class="o">+</span> <span class="n">n_right</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DecisionTreeRegressor.predict">
+<a class="viewcode-back" href="../decision_tree_regression.html#decision_tree_regression.DecisionTreeRegressor.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predicts values for the given data using the trained Decision Tree.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: The feature data for prediction.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - An array of predicted values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_predict_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_predict_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively predicts a value by traversing the tree.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - x: A single instance of feature data.</span>
+<span class="sd">        - tree: The current node in the decision tree.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - The predicted value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">tree</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Return value if it&#39;s a leaf node</span>
+        <span class="n">feature_val</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">tree</span><span class="o">.</span><span class="n">feature_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">feature_val</span> <span class="o">&lt;=</span> <span class="n">tree</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tree</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>  <span class="c1"># Go to left subtree</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">tree</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>  <span class="c1"># Go to right subtree</span></div>
+
+
+
+<div class="viewcode-block" id="plot_combined_regression_with_decision_tree">
+<a class="viewcode-back" href="../decision_tree_regression.html#decision_tree_regression.plot_combined_regression_with_decision_tree">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_combined_regression_with_decision_tree</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">tree_regressor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots the results of linear, polynomial and decision tree regressions on the training and test data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculations for polynomial regression</span>
+    <span class="n">X_train</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">y_pred_poly_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+    <span class="n">X_test</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">y_pred_poly_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coefficients</span><span class="p">):</span>
+        <span class="n">y_pred_poly_train</span> <span class="o">+=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">X_train</span> <span class="o">**</span> <span class="n">i</span>
+        <span class="n">y_pred_poly_test</span> <span class="o">+=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">X_test</span> <span class="o">**</span> <span class="n">i</span>
+
+    <span class="c1"># Index sorting for plotting polynomial regression</span>
+    <span class="n">sorted_indices_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+    <span class="n">X_train_sorted</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="n">sorted_indices_train</span><span class="p">]</span>
+    <span class="n">y_pred_poly_train_sorted</span> <span class="o">=</span> <span class="n">y_pred_poly_train</span><span class="p">[</span><span class="n">sorted_indices_train</span><span class="p">]</span>
+
+    <span class="n">sorted_indices_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    <span class="n">X_test_sorted</span> <span class="o">=</span> <span class="n">X_test</span><span class="p">[</span><span class="n">sorted_indices_test</span><span class="p">]</span>
+    <span class="n">y_pred_poly_test_sorted</span> <span class="o">=</span> <span class="n">y_pred_poly_test</span><span class="p">[</span><span class="n">sorted_indices_test</span><span class="p">]</span>
+
+    <span class="c1"># Calcoli per la regressione lineare</span>
+    <span class="n">y_pred_linear_train</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">train_data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">q</span>
+    <span class="n">y_pred_linear_test</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">q</span>
+
+    <span class="c1"># Addestramento e predizione con l&#39;albero decisionale</span>
+    <span class="n">tree_regressor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">train_data</span><span class="p">[</span><span class="s1">&#39;Close_scaled&#39;</span><span class="p">])</span>
+    <span class="n">y_pred_tree_test</span> <span class="o">=</span> <span class="n">tree_regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># Ordinamento degli indici per il plotting della regressione ad albero</span>
+    <span class="n">sorted_indices_tree</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    <span class="n">X_test_tree_sorted</span> <span class="o">=</span> <span class="n">X_test</span><span class="p">[</span><span class="n">sorted_indices_tree</span><span class="p">]</span>
+    <span class="n">y_pred_tree_test_sorted</span> <span class="o">=</span> <span class="n">y_pred_tree_test</span><span class="p">[</span><span class="n">sorted_indices_tree</span><span class="p">]</span>
+
+    <span class="c1"># Plotting</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">train_data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">],</span> <span class="n">train_data</span><span class="p">[</span><span class="s1">&#39;Close_scaled&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lightblue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Training Data&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">],</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Close_scaled&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Test Data&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_train_sorted</span><span class="p">,</span> <span class="n">y_pred_poly_train_sorted</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Polynomial Regression&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_pred_linear_train</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Linear Regression&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_test_tree_sorted</span><span class="p">,</span> <span class="n">y_pred_tree_test_sorted</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Decision Tree Regression&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Normalized Numerical Index&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized Close Price&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Combined Regression Models&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alberto Biscalchin, Adnane Soulaimani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

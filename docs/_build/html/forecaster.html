@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>forecaster module &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Gas Price Prediction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">forecaster module</a><ul>
+<li><a class="reference internal" href="#forecaster.convert_to_binary"><code class="docutils literal notranslate"><span class="pre">convert_to_binary()</span></code></a></li>
+<li><a class="reference internal" href="#forecaster.forecaster"><code class="docutils literal notranslate"><span class="pre">forecaster()</span></code></a></li>
+<li><a class="reference internal" href="#forecaster.plot_graph"><code class="docutils literal notranslate"><span class="pre">plot_graph()</span></code></a></li>
+<li><a class="reference internal" href="#forecaster.polynomial_predictions"><code class="docutils literal notranslate"><span class="pre">polynomial_predictions()</span></code></a></li>
+<li><a class="reference internal" href="#forecaster.print_section_header"><code class="docutils literal notranslate"><span class="pre">print_section_header()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Gas Price Prediction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">forecaster module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/forecaster.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-forecaster">
+<span id="forecaster-module"></span><h1>forecaster module<a class="headerlink" href="#module-forecaster" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="forecaster.convert_to_binary">
+<span class="sig-prename descclassname"><span class="pre">forecaster.</span></span><span class="sig-name descname"><span class="pre">convert_to_binary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/forecaster.html#convert_to_binary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#forecaster.convert_to_binary" title="Link to this definition"></a></dt>
+<dd><p>Converts continuous prediction values into binary (0 or 1) based on a specified threshold.</p>
+<p>Args:
+predictions (list or array): The list of predicted values.
+threshold (float): The threshold for conversion to binary.</p>
+<p>Returns:
+list: A list of binary values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="forecaster.forecaster">
+<span class="sig-prename descclassname"><span class="pre">forecaster.</span></span><span class="sig-name descname"><span class="pre">forecaster</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/forecaster.html#forecaster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#forecaster.forecaster" title="Link to this definition"></a></dt>
+<dd><p>Main function to run different regression models, calculate metrics, and plot results.</p>
+<p>Args:
+None</p>
+<p>Returns:
+None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="forecaster.plot_graph">
+<span class="sig-prename descclassname"><span class="pre">forecaster.</span></span><span class="sig-name descname"><span class="pre">plot_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree_regressor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/forecaster.html#plot_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#forecaster.plot_graph" title="Link to this definition"></a></dt>
+<dd><p>Plots a combined regression graph with an overlaid decision tree regression.</p>
+<p>This function initiates a spinner, signaling the start of the graph plotting process.
+It then calls the ‘plot_combined_regression_with_decision_tree’ function to generate
+and display the graph. The graph combines linear regression results with a decision
+tree regression overlay. After plotting, the spinner is stopped, indicating the
+completion of the process.</p>
+<p>Parameters:
+- train_data: Dataset used for training the regression model.
+- test_data: Dataset used for testing the regression model.
+- coefficients: Coefficients of the linear regression model.
+- m: The slope of the linear regression line.
+- q: The intercept of the linear regression line.
+- tree_regressor: The decision tree regressor instance.</p>
+<p>Note: This function assumes that all input parameters are pre-processed and
+ready for use in plotting. Ensure that ‘train_data’ and ‘test_data’ are scaled
+and transformed appropriately before passing them to this function.</p>
+<p>The function is designed to run in a separate thread to avoid blocking the main
+execution flow while the graph is being plotted.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="forecaster.polynomial_predictions">
+<span class="sig-prename descclassname"><span class="pre">forecaster.</span></span><span class="sig-name descname"><span class="pre">polynomial_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/forecaster.html#polynomial_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#forecaster.polynomial_predictions" title="Link to this definition"></a></dt>
+<dd><p>Calculates predictions based on polynomial regression coefficients.</p>
+<p>Args:
+data (DataFrame): DataFrame containing the feature ‘Numerical_Index_scaled’.
+coefficients (list): Coefficients of the polynomial regression.</p>
+<p>Returns:
+np.array: Predicted values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="forecaster.print_section_header">
+<span class="sig-prename descclassname"><span class="pre">forecaster.</span></span><span class="sig-name descname"><span class="pre">print_section_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/forecaster.html#print_section_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#forecaster.print_section_header" title="Link to this definition"></a></dt>
+<dd><p>Prints a formatted header for different sections of output.</p>
+<p>Args:
+title (str): Title of the section.</p>
+<p>Returns:
+None</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alberto Biscalchin, Adnane Soulaimani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>progress_bar &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Gas Price Prediction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gas Price Prediction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">progress_bar</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for progress_bar</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">colorama</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+
+<div class="viewcode-block" id="progress_bar">
+<a class="viewcode-back" href="../progress_bar.html#progress_bar.progress_bar">[docs]</a>
+<span class="k">def</span> <span class="nf">progress_bar</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colorama</span><span class="o">.</span><span class="n">Fore</span><span class="o">.</span><span class="n">YELLOW</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Displays a progress bar in the console.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - progress (int): The current progress of the task.</span>
+<span class="sd">    - total (int): The total value corresponding to 100% completion.</span>
+<span class="sd">    - color (colorama.Fore): The initial color of the progress bar (default is yellow).</span>
+
+<span class="sd">    The color of the progress bar changes based on the completion percentage:</span>
+<span class="sd">    - Red for less than 33% completion.</span>
+<span class="sd">    - Yellow for 33% to 99% completion.</span>
+<span class="sd">    - Green for 100% completion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define color codes</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="n">colorama</span><span class="o">.</span><span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span>
+    <span class="n">red</span> <span class="o">=</span> <span class="n">colorama</span><span class="o">.</span><span class="n">Fore</span><span class="o">.</span><span class="n">RED</span>
+    <span class="n">yellow</span> <span class="o">=</span> <span class="n">colorama</span><span class="o">.</span><span class="n">Fore</span><span class="o">.</span><span class="n">YELLOW</span>
+    <span class="n">reset</span> <span class="o">=</span> <span class="n">colorama</span><span class="o">.</span><span class="n">Fore</span><span class="o">.</span><span class="n">RESET</span>
+
+    <span class="c1"># Calculate the percentage of completion</span>
+    <span class="n">percent</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">progress</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total</span><span class="p">))</span>
+    <span class="c1"># Create the progress bar string</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="s1">&#39;█&#39;</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">percent</span><span class="p">))</span>
+
+    <span class="c1"># Change color based on completion percentage</span>
+    <span class="k">if</span> <span class="n">progress</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">total</span> <span class="o">/</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">red</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">total</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">progress</span> <span class="o">&lt;</span> <span class="n">total</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">yellow</span>
+    <span class="k">elif</span> <span class="n">progress</span> <span class="o">==</span> <span class="n">total</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">green</span>
+
+    <span class="c1"># Print the progress bar</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">color</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">|</span><span class="si">{</span><span class="n">bar</span><span class="si">}</span><span class="s2">| </span><span class="si">{</span><span class="n">percent</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span> <span class="o">+</span> <span class="n">reset</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Spinner">
+<a class="viewcode-back" href="../progress_bar.html#progress_bar.Spinner">[docs]</a>
+<span class="k">class</span> <span class="nc">Spinner</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A simple console spinner animation.</span>
+
+<span class="sd">    Uses threading to run the spinner animation in the background.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    - spinner: An iterator cycling through spinner characters.</span>
+<span class="sd">    - delay (float): The delay in seconds between spinner updates.</span>
+<span class="sd">    - stop_running (threading.Event): Event to stop the spinner animation.</span>
+<span class="sd">    - spin_thread (threading.Thread): The thread running the spinner animation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the spinner.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - delay (float): The delay in seconds between spinner updates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spinner</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">([</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">])</span>  <span class="c1"># Spinner character sequence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">delay</span>  <span class="c1"># Delay between spinner updates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_running</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>  <span class="c1"># Event to control stopping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spin_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_spin</span><span class="p">)</span>  <span class="c1"># Spinner thread</span>
+
+<div class="viewcode-block" id="Spinner.init_spin">
+<a class="viewcode-back" href="../progress_bar.html#progress_bar.Spinner.init_spin">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_spin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The method run by the spinner thread.</span>
+
+<span class="sd">        Continuously updates the spinner animation until stop_running is set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_running</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spinner</span><span class="p">))</span>  <span class="c1"># Write the next spinner character</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>  <span class="c1"># Ensure the character is displayed</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">)</span>  <span class="c1"># Wait for the specified delay</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Backspace to erase the last character</span></div>
+
+
+<div class="viewcode-block" id="Spinner.start">
+<a class="viewcode-back" href="../progress_bar.html#progress_bar.Spinner.start">[docs]</a>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts the spinner animation.</span>
+
+<span class="sd">        This method begins the thread that runs the spinner.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spin_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  <span class="c1"># Start the spinner thread</span></div>
+
+
+<div class="viewcode-block" id="Spinner.stop">
+<a class="viewcode-back" href="../progress_bar.html#progress_bar.Spinner.stop">[docs]</a>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stops the spinner animation.</span>
+
+<span class="sd">        Sets the stop_running event and waits for the thread to finish.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_running</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>  <span class="c1"># Signal to stop the spinner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spin_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>  <span class="c1"># Wait for the spinner thread to finish</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\b</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Erase the last spinner character</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alberto Biscalchin, Adnane Soulaimani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

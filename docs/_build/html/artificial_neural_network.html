@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>artificial_neural_network module &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Gas Price Prediction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">artificial_neural_network module</a><ul>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork</span></code></a><ul>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.backward"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.backward()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.forward"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.forward()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.loss_derivative"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.loss_derivative()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.plot_loss"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.plot_loss()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.plot_predictions"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.plot_predictions()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.predict"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.predict()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.train"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.train()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.ImprovedNeuralNetwork.update_params"><code class="docutils literal notranslate"><span class="pre">ImprovedNeuralNetwork.update_params()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#artificial_neural_network.leaky_relu"><code class="docutils literal notranslate"><span class="pre">leaky_relu()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.leaky_relu_derivative"><code class="docutils literal notranslate"><span class="pre">leaky_relu_derivative()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.relu"><code class="docutils literal notranslate"><span class="pre">relu()</span></code></a></li>
+<li><a class="reference internal" href="#artificial_neural_network.relu_derivative"><code class="docutils literal notranslate"><span class="pre">relu_derivative()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Gas Price Prediction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">artificial_neural_network module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/artificial_neural_network.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-artificial_neural_network">
+<span id="artificial-neural-network-module"></span><h1>artificial_neural_network module<a class="headerlink" href="#module-artificial_neural_network" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">artificial_neural_network.</span></span><span class="sig-name descname"><span class="pre">ImprovedNeuralNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A neural network implementation for regression tasks with Leaky ReLU activation and gradient descent optimization.</p>
+<p>Attributes:
+- layer_sizes (list): Sizes of each layer in the network.
+- learning_rate (float): Learning rate for optimization.
+- epochs (int): Number of epochs for training.
+- weights (list): The weights matrices of the network.
+- biases (list): The biases vectors of the network.
+- loss_history (list): The history of loss values during training.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.backward">
+<span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.backward" title="Link to this definition"></a></dt>
+<dd><p>Performs backward propagation through the neural network.</p>
+<p>Parameters:
+- zs: A list of the linear combinations (z values) for each layer as calculated in the forward pass.
+- activations: A list of the activations for each layer as calculated in the forward pass.
+- y: The actual target values.</p>
+<p>Returns:
+- nabla_w: Gradients (partial derivatives) of the cost function with respect to the weights.
+- nabla_b: Gradients (partial derivatives) of the cost function with respect to the biases.</p>
+<p>The method calculates the gradient of the cost function with respect to each parameter (weights and biases)
+in the network. This is done by applying the chain rule to propagate the error backward from the output layer
+to the input layer. The gradients are used to update the weights and biases in the training step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs forward propagation through the neural network.</p>
+<p>Parameters:
+- X: The input data as a numpy array. Each row represents a sample, and each column represents a feature.</p>
+<p>Returns:
+- zs: A list of the linear combinations (z values) for each layer.
+- activations: A list of the activations for each layer.</p>
+<p>The method calculates the linear combination (z) for each layer by multiplying the input/activation of the
+previous layer with the weights and adding the bias. It then applies the Leaky ReLU activation function to these
+linear combinations to get the activations of the current layer. These steps are repeated for each layer in the network.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.loss_derivative">
+<span class="sig-name descname"><span class="pre">loss_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_activations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.loss_derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.loss_derivative" title="Link to this definition"></a></dt>
+<dd><p>Computes the derivative of the loss function.</p>
+<p>Parameters:
+- output_activations: The activations (outputs) from the final layer of the network.
+- y: The actual target values.</p>
+<p>Returns:
+- The derivative of the loss function.</p>
+<p>This method calculates the gradient of the loss function with respect to the activations of the output layer.
+It is used during backpropagation to compute gradients for the output layer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.plot_loss">
+<span class="sig-name descname"><span class="pre">plot_loss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.plot_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.plot_loss" title="Link to this definition"></a></dt>
+<dd><p>Plots the training loss over each epoch.</p>
+<p>This method visualizes how the loss of the neural network decreases (ideally) over time during training.
+It is a useful tool for monitoring the training process and diagnosing issues with model learning.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.plot_predictions">
+<span class="sig-name descname"><span class="pre">plot_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.plot_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.plot_predictions" title="Link to this definition"></a></dt>
+<dd><p>Plots the neural network’s predictions against the actual data.</p>
+<p>Parameters:
+- X: Input features, used for making predictions.
+- y: Actual target values.</p>
+<p>This method provides a visual comparison between the predictions made by the neural network and the actual data.
+It is useful for assessing the model’s performance visually.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.predict" title="Link to this definition"></a></dt>
+<dd><p>Makes predictions using the trained neural network.</p>
+<p>Parameters:
+- X: Input features, a numpy array where each row is a sample and each column is a feature.</p>
+<p>Returns:
+- The predictions of the neural network as a numpy array.</p>
+<p>This method uses forward propagation to compute the output of the network for the given input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.train" title="Link to this definition"></a></dt>
+<dd><p>Trains the neural network on the provided dataset.</p>
+<p>Parameters:
+- X: Input features, a numpy array where each row is a sample and each column is a feature.
+- y: Target values, a numpy array corresponding to the input samples.</p>
+<p>The method iterates over the number of epochs, performing forward and backward propagation,
+and updating the network parameters in each iteration. It also records the training loss after each epoch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="artificial_neural_network.ImprovedNeuralNetwork.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nabla_w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nabla_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#ImprovedNeuralNetwork.update_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.ImprovedNeuralNetwork.update_params" title="Link to this definition"></a></dt>
+<dd><p>Updates the weights and biases of the network using gradient descent.</p>
+<p>Parameters:
+- nabla_w: Gradients of the cost function with respect to the weights.
+- nabla_b: Gradients of the cost function with respect to the biases.</p>
+<p>This method updates each weight and bias in the network by subtracting a portion of the gradient.
+The portion is determined by the learning rate and the scale of the gradient.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="artificial_neural_network.leaky_relu">
+<span class="sig-prename descclassname"><span class="pre">artificial_neural_network.</span></span><span class="sig-name descname"><span class="pre">leaky_relu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#leaky_relu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.leaky_relu" title="Link to this definition"></a></dt>
+<dd><p>Implements the Leaky ReLU activation function.</p>
+<p>Parameters:
+- x: Input array or value.
+- alpha: Slope coefficient for negative inputs.</p>
+<p>Returns:
+- An array where each element is alpha times the element if it’s negative, and the element itself if it’s positive.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="artificial_neural_network.leaky_relu_derivative">
+<span class="sig-prename descclassname"><span class="pre">artificial_neural_network.</span></span><span class="sig-name descname"><span class="pre">leaky_relu_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#leaky_relu_derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.leaky_relu_derivative" title="Link to this definition"></a></dt>
+<dd><p>Computes the derivative of the Leaky ReLU function.</p>
+<p>Parameters:
+- x: Input array or value.
+- alpha: Slope coefficient for negative inputs.</p>
+<p>Returns:
+- An array where each element is alpha if the corresponding element in x is less than or equal to 0, otherwise 1.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="artificial_neural_network.relu">
+<span class="sig-prename descclassname"><span class="pre">artificial_neural_network.</span></span><span class="sig-name descname"><span class="pre">relu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#relu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.relu" title="Link to this definition"></a></dt>
+<dd><p>Implements the ReLU (Rectified Linear Unit) activation function.</p>
+<p>Parameters:
+- x: Input array or value.</p>
+<p>Returns:
+- An array where each element is the max of 0 and the element in x.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="artificial_neural_network.relu_derivative">
+<span class="sig-prename descclassname"><span class="pre">artificial_neural_network.</span></span><span class="sig-name descname"><span class="pre">relu_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/artificial_neural_network.html#relu_derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#artificial_neural_network.relu_derivative" title="Link to this definition"></a></dt>
+<dd><p>Computes the derivative of the ReLU function.</p>
+<p>Parameters:
+- x: Input array or value.</p>
+<p>Returns:
+- An array where each element is 1 if the corresponding element in x is greater than 0, otherwise 0.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alberto Biscalchin, Adnane Soulaimani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>forecaster &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Gas Price Prediction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gas Price Prediction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">forecaster</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for forecaster</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Importing necessary libraries and modules</span>
+<span class="kn">from</span> <span class="nn">data_scraper</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># Importing functions from data_scraper.py for data scraping</span>
+<span class="kn">from</span> <span class="nn">linear_Regression</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># Importing linear regression-related functions</span>
+<span class="kn">from</span> <span class="nn">polynomial_Regression</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># Importing polynomial regression-related functions</span>
+<span class="kn">from</span> <span class="nn">random_forest</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># Importing random forest-related functions</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>  <span class="c1"># For splitting the data into train and test sets</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>  <span class="c1"># For calculating mean squared error of predictions</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_curve</span><span class="p">,</span> <span class="n">auc</span>  <span class="c1"># For generating ROC curves and calculating AUC</span>
+<span class="kn">from</span> <span class="nn">artificial_neural_network</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># Importing ANN-related functions</span>
+<span class="kn">import</span> <span class="nn">time</span>  <span class="c1"># For tracking execution time</span>
+
+
+<span class="c1"># Function to print section headers in the console</span>
+<div class="viewcode-block" id="print_section_header">
+<a class="viewcode-back" href="../forecaster.html#forecaster.print_section_header">[docs]</a>
+<span class="k">def</span> <span class="nf">print_section_header</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prints a formatted header for different sections of output.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    title (str): Title of the section.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">75</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">))</span>  <span class="c1"># Center-aligns the title</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">75</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Function to convert regression predictions to binary values based on a threshold</span>
+<div class="viewcode-block" id="convert_to_binary">
+<a class="viewcode-back" href="../forecaster.html#forecaster.convert_to_binary">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_to_binary</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts continuous prediction values into binary (0 or 1) based on a specified threshold.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    predictions (list or array): The list of predicted values.</span>
+<span class="sd">    threshold (float): The threshold for conversion to binary.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    list: A list of binary values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">pred</span> <span class="o">&gt;=</span> <span class="n">threshold</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">pred</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="plot_graph">
+<a class="viewcode-back" href="../forecaster.html#forecaster.plot_graph">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_graph</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">tree_regressor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a combined regression graph with an overlaid decision tree regression.</span>
+
+<span class="sd">    This function initiates a spinner, signaling the start of the graph plotting process.</span>
+<span class="sd">    It then calls the &#39;plot_combined_regression_with_decision_tree&#39; function to generate</span>
+<span class="sd">    and display the graph. The graph combines linear regression results with a decision</span>
+<span class="sd">    tree regression overlay. After plotting, the spinner is stopped, indicating the</span>
+<span class="sd">    completion of the process.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - train_data: Dataset used for training the regression model.</span>
+<span class="sd">    - test_data: Dataset used for testing the regression model.</span>
+<span class="sd">    - coefficients: Coefficients of the linear regression model.</span>
+<span class="sd">    - m: The slope of the linear regression line.</span>
+<span class="sd">    - q: The intercept of the linear regression line.</span>
+<span class="sd">    - tree_regressor: The decision tree regressor instance.</span>
+
+<span class="sd">    Note: This function assumes that all input parameters are pre-processed and</span>
+<span class="sd">    ready for use in plotting. Ensure that &#39;train_data&#39; and &#39;test_data&#39; are scaled</span>
+<span class="sd">    and transformed appropriately before passing them to this function.</span>
+
+<span class="sd">    The function is designed to run in a separate thread to avoid blocking the main</span>
+<span class="sd">    execution flow while the graph is being plotted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph_spinner</span> <span class="o">=</span> <span class="n">Spinner</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plotting results...&quot;</span><span class="p">)</span>
+
+    <span class="n">graph_spinner</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># Qui inserisci il tuo codice per generare il grafico</span>
+    <span class="n">plot_combined_regression_with_decision_tree</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">tree_regressor</span><span class="p">)</span>
+
+    <span class="n">graph_spinner</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+
+
+<span class="c1"># Function to generate predictions for polynomial regression</span>
+<div class="viewcode-block" id="polynomial_predictions">
+<a class="viewcode-back" href="../forecaster.html#forecaster.polynomial_predictions">[docs]</a>
+<span class="k">def</span> <span class="nf">polynomial_predictions</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates predictions based on polynomial regression coefficients.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    data (DataFrame): DataFrame containing the feature &#39;Numerical_Index_scaled&#39;.</span>
+<span class="sd">    coefficients (list): Coefficients of the polynomial regression.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    np.array: Predicted values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coefficients</span><span class="p">):</span>
+        <span class="n">y_pred</span> <span class="o">+=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">X</span> <span class="o">**</span> <span class="n">i</span>
+
+    <span class="k">return</span> <span class="n">y_pred</span></div>
+
+
+
+<span class="c1"># Main function to perform various regression analyses</span>
+<div class="viewcode-block" id="forecaster">
+<a class="viewcode-back" href="../forecaster.html#forecaster.forecaster">[docs]</a>
+<span class="k">def</span> <span class="nf">forecaster</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function to run different regression models, calculate metrics, and plot results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Initialize spinners for UI feedback during long-running processes</span>
+        <span class="n">spinner_tree</span> <span class="o">=</span> <span class="n">Spinner</span><span class="p">()</span>  <span class="c1"># For Decision Tree Regression</span>
+        <span class="n">spinner_forest</span> <span class="o">=</span> <span class="n">Spinner</span><span class="p">()</span>  <span class="c1"># For Random Forest Regression</span>
+
+        <span class="c1"># Load and preprocess data</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading Data...&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">()</span>  <span class="c1"># Load data using a predefined function</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>  <span class="c1"># Fill missing values with mean</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># Just for reference</span>
+
+        <span class="c1"># Perform feature scaling on the data</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing Feature Scaling...&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">feature_scaling</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Normalized Data:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        START LINEAR REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Linear Regression</span>
+        <span class="n">print_section_header</span><span class="p">(</span><span class="s2">&quot;Linear Regression&quot;</span><span class="p">)</span>
+        <span class="n">start_time_linear</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>  <span class="c1"># Start timing</span>
+
+        <span class="c1"># Data splitting</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Splitting Data into Training and Testing Sets...&quot;</span><span class="p">)</span>
+        <span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+        <span class="c1"># Linear regression settings</span>
+        <span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.001</span>
+        <span class="n">num_iterations</span> <span class="o">=</span> <span class="mi">1000</span>
+
+        <span class="c1"># Linear regression process</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing Linear Regression using Gradient Descent...&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trying to compute using CUDA GPU technology...&quot;</span><span class="p">)</span>
+            <span class="n">m</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">gradient_descent_gpu</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">num_iterations</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to compute using parallelization.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using CPU computation: Warning! Process will take longer...&quot;</span><span class="p">)</span>
+            <span class="n">m</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">gradient_descent</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">num_iterations</span><span class="p">)</span>
+
+        <span class="c1"># Calculate MSE for linear regression</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculating Mean Squared Error for Linear Regression on Test Set...&quot;</span><span class="p">)</span>
+        <span class="n">mse_linear</span> <span class="o">=</span> <span class="n">calculate_linear_mse</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+        <span class="n">stop_time_linear</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">execution_time_linear</span> <span class="o">=</span> <span class="n">stop_time_linear</span> <span class="o">-</span> <span class="n">start_time_linear</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Preparing Linear ROC</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Calculates predictions for the test set</span>
+        <span class="n">linear_predictions</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Numerical_Index_scaled&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">q</span>
+
+        <span class="c1"># Establish a threshold for classification</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Close_scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="c1"># We use the average of the &#39;Close_scaled&#39; values as the method for calculating the threshold.</span>
+
+        <span class="c1"># Convert predictions to binary values</span>
+        <span class="n">binary_predictions</span> <span class="o">=</span> <span class="n">convert_to_binary</span><span class="p">(</span><span class="n">linear_predictions</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+        <span class="c1"># Calculates the true positive and false positive for different thresholds</span>
+        <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Close_scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">threshold</span> <span class="k">else</span> <span class="mi">0</span><span class="p">),</span>
+                                         <span class="n">binary_predictions</span><span class="p">)</span>
+
+        <span class="c1"># Calculate Area Under the Curve (AUC)</span>
+        <span class="n">auc_value</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
+
+        <span class="c1"># Plot the single ROC curve  - *** delegated to the final section of the code ***</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        plt.figure()</span>
+<span class="sd">        plt.plot(fpr, tpr, color=&#39;darkorange&#39;, lw=2, label=f&#39;Linear Regression ROC (area = {auc_value:.2f})&#39;)</span>
+<span class="sd">        plt.plot([0, 1], [0, 1], color=&#39;navy&#39;, lw=2, linestyle=&#39;--&#39;)</span>
+<span class="sd">        plt.xlim([0.0, 1.0])</span>
+<span class="sd">        plt.ylim([0.0, 1.05])</span>
+<span class="sd">        plt.xlabel(&#39;False Positive Rate&#39;)</span>
+<span class="sd">        plt.ylabel(&#39;True Positive Rate&#39;)</span>
+<span class="sd">        plt.title(&#39;ROC for Linear Regression&#39;)</span>
+<span class="sd">        plt.legend(loc=&quot;lower right&quot;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        END LINEAR REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        START POLYNOMIAL REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">print_section_header</span><span class="p">(</span><span class="s2">&quot;Polynomial Regression&quot;</span><span class="p">)</span>
+        <span class="n">start_time_poly</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="c1"># Perform polynomial regression with a degree of 16 and get the coefficients</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing Polynomial Regression...&quot;</span><span class="p">)</span>
+
+        <span class="n">degree</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># degree of the polynomial</span>
+        <span class="n">coefficients</span> <span class="o">=</span> <span class="n">polynomial_regression</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
+
+        <span class="c1"># Calculate MSE for polynomial regression</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculating Mean Squared Error for Polynomial Regression on Test Set...&quot;</span><span class="p">)</span>
+        <span class="n">mse_polynomial</span> <span class="o">=</span> <span class="n">calculate_polynomial_mse</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
+        <span class="n">stop_time_poly</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">execution_time_poly</span> <span class="o">=</span> <span class="n">stop_time_poly</span> <span class="o">-</span> <span class="n">start_time_poly</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preparing Polynomial ROC</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Calculates predictions for the test set</span>
+        <span class="n">polynomial_pred</span> <span class="o">=</span> <span class="n">polynomial_predictions</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
+
+        <span class="c1"># Establish a threshold for classification</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Close_scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># the mean of the values &#39;Close_scaled&#39;</span>
+
+        <span class="c1"># Convert predictions to binary values</span>
+        <span class="n">binary_predictions</span> <span class="o">=</span> <span class="n">convert_to_binary</span><span class="p">(</span><span class="n">polynomial_pred</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+        <span class="c1"># Calculates the true positive and false positive for different thresholds</span>
+        <span class="n">fpr_pr</span><span class="p">,</span> <span class="n">tpr_pr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s1">&#39;Close_scaled&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">threshold</span> <span class="k">else</span> <span class="mi">0</span><span class="p">),</span>
+                                         <span class="n">binary_predictions</span><span class="p">)</span>
+
+        <span class="c1"># Calculate Area Under the Curve (AUC)</span>
+        <span class="n">auc_value_pr</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr_pr</span><span class="p">,</span> <span class="n">tpr_pr</span><span class="p">)</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        # Plot the ROC curve *** delegated to the final section of the code ***</span>
+<span class="sd">        plt.figure()</span>
+<span class="sd">        plt.plot(fpr_pr, tpr_pr, color=&#39;darkorange&#39;, lw=2, label=f&#39;Polynomial Regression ROC curve (area = {auc_value_pr:.2f})&#39;)</span>
+<span class="sd">        plt.plot([0, 1], [0, 1], color=&#39;navy&#39;, lw=2, linestyle=&#39;--&#39;)</span>
+<span class="sd">        plt.xlim([0.0, 1.0])</span>
+<span class="sd">        plt.ylim([0.0, 1.05])</span>
+<span class="sd">        plt.xlabel(&#39;False Positive Rate&#39;)</span>
+<span class="sd">        plt.ylabel(&#39;True Positive Rate&#39;)</span>
+<span class="sd">        plt.title(&#39;ROC for Polynomial Regression&#39;)</span>
+<span class="sd">        plt.legend(loc=&quot;lower right&quot;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        END POLYNOMIAL REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        START DECISION TREE REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Decision tree process</span>
+        <span class="n">print_section_header</span><span class="p">(</span><span class="s2">&quot;Decision Tree Regression&quot;</span><span class="p">)</span>
+        <span class="n">start_time_tree</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing Decision Tree Regression...&quot;</span><span class="p">)</span>
+        <span class="n">spinner_tree</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Decision Tree Regression</span>
+        <span class="c1"># Separation of features and target</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># Assuming &#39;Close&#39; is target</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Division into training and test sets</span>
+        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+        <span class="c1"># Creation and training of the decision tree regression model</span>
+        <span class="n">tree_regressor</span> <span class="o">=</span> <span class="n">DecisionTreeRegressor</span><span class="p">(</span><span class="n">min_samples_split</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># Editable parameters (2,5) is optimal</span>
+        <span class="n">tree_regressor</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+        <span class="c1"># Predictions on test data</span>
+        <span class="n">y_pred_tree</span> <span class="o">=</span> <span class="n">tree_regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+        <span class="c1"># Calculation of mean square error (MSE)</span>
+        <span class="n">mse_tree</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_tree</span><span class="p">)</span>
+        <span class="n">spinner_tree</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tree completed.&quot;</span><span class="p">)</span>
+        <span class="n">stop_time_tree</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">execution_time_tree</span> <span class="o">=</span> <span class="n">stop_time_tree</span> <span class="o">-</span> <span class="n">start_time_tree</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preparing Decision Tree Regression ROC</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Decision tree predictions</span>
+        <span class="n">y_pred_tree</span> <span class="o">=</span> <span class="n">tree_regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+        <span class="c1"># Establish a threshold for classification</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+
+        <span class="c1"># Convert predictions to binary values</span>
+        <span class="n">binary_predictions</span> <span class="o">=</span> <span class="n">convert_to_binary</span><span class="p">(</span><span class="n">y_pred_tree</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+        <span class="c1"># Calculates the true positive and false positive for different thresholds</span>
+        <span class="n">fpr_dt</span><span class="p">,</span> <span class="n">tpr_dt</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">binary_predictions</span><span class="p">)</span>
+
+        <span class="c1"># Calculate Area Under the Curve (AUC)</span>
+        <span class="n">auc_value_dt</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr_dt</span><span class="p">,</span> <span class="n">tpr_dt</span><span class="p">)</span>
+
+        <span class="c1"># Plot the ROC curve *** delegated to the final section of the code ***</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        plt.figure()</span>
+<span class="sd">        plt.plot(fpr_dt, tpr_dt, color=&#39;darkorange&#39;, lw=2, label=f&#39;Tree Regression ROC curve (area = {auc_value_dt:.2f})&#39;)</span>
+<span class="sd">        plt.plot([0, 1], [0, 1], color=&#39;navy&#39;, lw=2, linestyle=&#39;--&#39;)</span>
+<span class="sd">        plt.xlim([0.0, 1.0])</span>
+<span class="sd">        plt.ylim([0.0, 1.05])</span>
+<span class="sd">        plt.xlabel(&#39;False Positive Rate&#39;)</span>
+<span class="sd">        plt.ylabel(&#39;True Positive Rate&#39;)</span>
+<span class="sd">        plt.title(&#39;ROC for Decision Tree Regression&#39;)</span>
+<span class="sd">        plt.legend(loc=&quot;lower right&quot;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        END DECISION TREE REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        START RANDOM FOREST REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">print_section_header</span><span class="p">(</span><span class="s2">&quot;Random Forest Regression&quot;</span><span class="p">)</span>
+        <span class="c1"># Record the start time for execution time calculation</span>
+        <span class="n">start_time_forest</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Performing Random Forest Regression...&quot;</span><span class="p">)</span>
+        <span class="c1"># Start a spinner (a simple text-based spinner animation) to indicate processing</span>
+        <span class="n">spinner_forest</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Creating and training the Random Forest model</span>
+        <span class="c1"># n_estimators refers to the number of trees in the forest</span>
+        <span class="c1"># min_samples_split specifies the minimum number of samples required to split an internal node</span>
+        <span class="c1"># max_depth is the maximum depth of the trees</span>
+        <span class="n">random_forest</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">random_forest</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+        <span class="c1"># Making predictions on the test dataset</span>
+        <span class="n">y_pred_forest</span> <span class="o">=</span> <span class="n">random_forest</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+        <span class="c1"># Calculating Mean Squared Error (MSE) for model evaluation</span>
+        <span class="n">mse_forest</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_forest</span><span class="p">)</span>
+
+        <span class="c1"># Stopping the spinner animation</span>
+        <span class="n">spinner_forest</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Forest completed&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Calculating the execution time for the Random Forest Regression</span>
+        <span class="n">stop_time_forest</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">execution_time_forest</span> <span class="o">=</span> <span class="n">stop_time_forest</span> <span class="o">-</span> <span class="n">start_time_forest</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preparing Random Forest Regression ROC </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Making predictions on the test dataset</span>
+        <span class="n">y_pred_forest</span> <span class="o">=</span> <span class="n">random_forest</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+        <span class="c1"># Establish a threshold for classification</span>
+        <span class="c1"># Here, the threshold is set as the mean of the actual test values</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+
+        <span class="c1"># Convert continuous predictions to binary (0/1) based on the threshold</span>
+        <span class="n">binary_predictions</span> <span class="o">=</span> <span class="n">convert_to_binary</span><span class="p">(</span><span class="n">y_pred_forest</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+        <span class="c1"># Calculate True Positive Rate (TPR) and False Positive Rate (FPR) for different threshold values</span>
+        <span class="n">fpr_rf</span><span class="p">,</span> <span class="n">tpr_rf</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">binary_predictions</span><span class="p">)</span>
+
+        <span class="c1"># Calculate Area Under the Curve (AUC)</span>
+        <span class="n">auc_value_rf</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr_rf</span><span class="p">,</span> <span class="n">tpr_rf</span><span class="p">)</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        # Plotta la curva ROC</span>
+<span class="sd">        plt.figure()</span>
+<span class="sd">        plt.plot(fpr_rf, tpr_rf, color=&#39;darkorange&#39;, lw=2, label=f&#39;R_Forest Regression ROC curve (area = {auc_value_rf:.2f})&#39;)</span>
+<span class="sd">        plt.plot([0, 1], [0, 1], color=&#39;navy&#39;, lw=2, linestyle=&#39;--&#39;)</span>
+<span class="sd">        plt.xlim([0.0, 1.0])</span>
+<span class="sd">        plt.ylim([0.0, 1.05])</span>
+<span class="sd">        plt.xlabel(&#39;False Positive Rate&#39;)</span>
+<span class="sd">        plt.ylabel(&#39;True Positive Rate&#39;)</span>
+<span class="sd">        plt.title(&#39;ROC for Random Forest Regression&#39;)</span>
+<span class="sd">        plt.legend(loc=&quot;lower right&quot;)</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        END RANDOM FOREST REGRESSION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        START ARTIFICIAL NEURAL NETWORK</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time_ann</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Performing ANN Regression...&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+            <span class="c1"># Separation of characteristics and target</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># Assuming that &#39;Close&#39; is the target</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Reshape y to fit the dimensions expected by ANN</span>
+
+            <span class="c1"># Division into training and test sets</span>
+            <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+            <span class="c1"># Defining the dimensions of the neural network</span>
+            <span class="n">input_size</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Number of features</span>
+            <span class="n">hidden_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>  <span class="c1"># Size of hidden layers</span>
+            <span class="n">output_size</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Output size for regression</span>
+
+            <span class="c1"># ANN initialisation and training</span>
+            <span class="n">ann_model</span> <span class="o">=</span> <span class="n">ImprovedNeuralNetwork</span><span class="p">([</span><span class="n">input_size</span><span class="p">]</span> <span class="o">+</span> <span class="n">hidden_sizes</span> <span class="o">+</span> <span class="p">[</span><span class="n">output_size</span><span class="p">],</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.0015</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+            <span class="n">ann_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+            <span class="c1"># ANN evaluation</span>
+            <span class="n">y_pred_ann</span> <span class="o">=</span> <span class="n">ann_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+            <span class="n">mse_ann</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_ann</span><span class="p">)</span>
+
+            <span class="c1"># Optional display - ** Used for the analysis phase</span>
+            <span class="c1"># ann_model.plot_loss()</span>
+            <span class="c1"># ann_model.plot_predictions(X_test, y_test)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Plotting ROC</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="c1"># ANN Predictions</span>
+            <span class="n">y_pred_ann</span> <span class="o">=</span> <span class="n">ann_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+            <span class="c1"># Transforms predictions and actual values into a suitable format</span>
+            <span class="n">y_pred_ann_flat</span> <span class="o">=</span> <span class="n">y_pred_ann</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">y_test_flat</span> <span class="o">=</span> <span class="n">y_test</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+            <span class="c1"># Establish a threshold for classification</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_test_flat</span><span class="p">)</span>  <span class="c1"># average of real values in y_test_flat</span>
+
+            <span class="c1"># Convert predictions to binary values</span>
+            <span class="n">binary_predictions</span> <span class="o">=</span> <span class="n">convert_to_binary</span><span class="p">(</span><span class="n">y_pred_ann_flat</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+            <span class="c1"># Calculates the true positive and false positive for different thresholds</span>
+            <span class="n">fpr_ann</span><span class="p">,</span> <span class="n">tpr_ann</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test_flat</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">binary_predictions</span><span class="p">)</span>
+
+            <span class="c1"># Calculate Area Under the Curve (AUC)</span>
+            <span class="n">auc_value_ann</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr_ann</span><span class="p">,</span> <span class="n">tpr_ann</span><span class="p">)</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            # Plotta la curva ROC</span>
+<span class="sd">            plt.figure()</span>
+<span class="sd">            plt.plot(fpr_ann, tpr_ann, color=&#39;darkorange&#39;, lw=2, label=f&#39;ROC curve (area = {auc_value_ann:.2f})&#39;)</span>
+<span class="sd">            plt.plot([0, 1], [0, 1], color=&#39;navy&#39;, lw=2, linestyle=&#39;--&#39;)</span>
+<span class="sd">            plt.xlim([0.0, 1.0])</span>
+<span class="sd">            plt.ylim([0.0, 1.05])</span>
+<span class="sd">            plt.xlabel(&#39;False Positive Rate&#39;)</span>
+<span class="sd">            plt.ylabel(&#39;True Positive Rate&#39;)</span>
+<span class="sd">            plt.title(&#39;Receiver Operating Characteristic for ANN Regression&#39;)</span>
+<span class="sd">            plt.legend(loc=&quot;lower right&quot;)</span>
+<span class="sd">            plt.show()</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Plt all ROC together</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+            <span class="c1"># Linear Regression ROC</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Linear Regression (area = </span><span class="si">{</span><span class="n">auc_value</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Polynomial Regression ROC</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_pr</span><span class="p">,</span> <span class="n">tpr_pr</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Polynomial Regression (area = </span><span class="si">{</span><span class="n">auc_value_pr</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Decision Tree Regression ROC</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_dt</span><span class="p">,</span> <span class="n">tpr_dt</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Decision Tree Regression (area = </span><span class="si">{</span><span class="n">auc_value_dt</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Random Forest Regression ROC</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_rf</span><span class="p">,</span> <span class="n">tpr_rf</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Random Forest Regression (area = </span><span class="si">{</span><span class="n">auc_value_rf</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+            <span class="c1"># ANN Regression ROC</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr_ann</span><span class="p">,</span> <span class="n">tpr_ann</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;ANN Regression (area = </span><span class="si">{</span><span class="n">auc_value_ann</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Plot details</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;navy&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;False Positive Rate&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;True Positive Rate&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Receiver Operating Characteristic for All Regressions&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Exception encountered:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Artificial Neural Network Critical Failure.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Something went wrong in the data collection process.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The yFinance API didn&#39;t provide valid data for the analysis.&quot;</span><span class="p">)</span>
+            <span class="n">mse_ann</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">stop_time_ann</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">execution_time_ann</span> <span class="o">=</span> <span class="n">stop_time_ann</span> <span class="o">-</span> <span class="n">start_time_ann</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        END ARTIFICIAL NEURAL NETWORK</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        PRINT RESULT SECTION</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        graph_spinner = Spinner()</span>
+<span class="sd">        print(&quot;Plotting results...&quot;)</span>
+
+<span class="sd">        # Start the spinner animation</span>
+<span class="sd">        graph_spinner.start()</span>
+
+<span class="sd">        # Calling the plot_decision_tree_regression function</span>
+<span class="sd">        # To print this graph, we unfortunately have to re-train the model on the scaled and transformed</span>
+<span class="sd">        # features to match the scaling values of the graph of the other features.</span>
+<span class="sd">        # From this point on, we abandoned this method of representation as it slowed</span>
+<span class="sd">        # the thread down a lot and did not bring any advantage.</span>
+<span class="sd">        plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor)</span>
+
+<span class="sd">        # Stop the spinner animation as the plotting is complete</span>
+<span class="sd">        graph_spinner.stop()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="n">print_section_header</span><span class="p">(</span><span class="s2">&quot;Mean Square Error (MSE)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Linear Regression MSE: </span><span class="si">{</span><span class="n">mse_linear</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Polynomial Regression MSE: </span><span class="si">{</span><span class="n">mse_polynomial</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Decision Tree MSE: </span><span class="si">{</span><span class="n">mse_tree</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Random Forest MSE: </span><span class="si">{</span><span class="n">mse_forest</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ANN Regression MSE: </span><span class="si">{</span><span class="n">mse_ann</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">print_section_header</span><span class="p">(</span><span class="s2">&quot;Execution Time&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Linear Regression Execution Time: </span><span class="si">{</span><span class="n">execution_time_linear</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Polynomial Regression Execution Time: </span><span class="si">{</span><span class="n">execution_time_poly</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Decision Tree Regression Execution Time: </span><span class="si">{</span><span class="n">execution_time_tree</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Random Forest Regression Execution Time: </span><span class="si">{</span><span class="n">execution_time_forest</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ANN Regression Execution Time: </span><span class="si">{</span><span class="n">execution_time_ann</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+        <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Press Enter to Plot the graph.</span><span class="se">\n</span><span class="s2">&gt;&quot;</span><span class="p">)</span>
+
+        <span class="n">plot_graph</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">tree_regressor</span><span class="p">)</span>
+
+    <span class="c1"># Handle KeyboardInterrupt to gracefully exit the program</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task finished successfully&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Handle other exceptions and print their messages</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception encountered:&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Main Execution</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">forecaster</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alberto Biscalchin, Adnane Soulaimani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

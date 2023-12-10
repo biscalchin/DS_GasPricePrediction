@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>artificial_neural_network &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Gas Price Prediction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Gas Price Prediction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">artificial_neural_network</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for artificial_neural_network</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">progress_bar</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="relu">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.relu">[docs]</a>
+<span class="k">def</span> <span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements the ReLU (Rectified Linear Unit) activation function.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - x: Input array or value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - An array where each element is the max of 0 and the element in x.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="relu_derivative">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.relu_derivative">[docs]</a>
+<span class="k">def</span> <span class="nf">relu_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the derivative of the ReLU function.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - x: Input array or value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - An array where each element is 1 if the corresponding element in x is greater than 0, otherwise 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="leaky_relu">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.leaky_relu">[docs]</a>
+<span class="k">def</span> <span class="nf">leaky_relu</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements the Leaky ReLU activation function.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - x: Input array or value.</span>
+<span class="sd">    - alpha: Slope coefficient for negative inputs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - An array where each element is alpha times the element if it&#39;s negative, and the element itself if it&#39;s positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="leaky_relu_derivative">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.leaky_relu_derivative">[docs]</a>
+<span class="k">def</span> <span class="nf">leaky_relu_derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the derivative of the Leaky ReLU function.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - x: Input array or value.</span>
+<span class="sd">    - alpha: Slope coefficient for negative inputs.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - An array where each element is alpha if the corresponding element in x is less than or equal to 0, otherwise 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork">[docs]</a>
+<span class="k">class</span> <span class="nc">ImprovedNeuralNetwork</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A neural network implementation for regression tasks with Leaky ReLU activation and gradient descent optimization.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    - layer_sizes (list): Sizes of each layer in the network.</span>
+<span class="sd">    - learning_rate (float): Learning rate for optimization.</span>
+<span class="sd">    - epochs (int): Number of epochs for training.</span>
+<span class="sd">    - weights (list): The weights matrices of the network.</span>
+<span class="sd">    - biases (list): The biases vectors of the network.</span>
+<span class="sd">    - loss_history (list): The history of loss values during training.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_sizes</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the neural network.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - layer_sizes (list): Sizes of each layer in the network.</span>
+<span class="sd">        - learning_rate (float): Learning rate for optimization.</span>
+<span class="sd">        - epochs (int): Number of epochs for training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span> <span class="o">=</span> <span class="n">layer_sizes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">=</span> <span class="n">epochs</span>
+
+        <span class="c1"># Initialize weights and biases</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layer_sizes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">layer_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">layer_sizes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span> <span class="o">/</span> <span class="n">layer_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">layer_sizes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_history</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.forward">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.forward">[docs]</a>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs forward propagation through the neural network.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: The input data as a numpy array. Each row represents a sample, and each column represents a feature.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - zs: A list of the linear combinations (z values) for each layer.</span>
+<span class="sd">        - activations: A list of the activations for each layer.</span>
+
+<span class="sd">        The method calculates the linear combination (z) for each layer by multiplying the input/activation of the</span>
+<span class="sd">        previous layer with the weights and adding the bias. It then applies the Leaky ReLU activation function to these</span>
+<span class="sd">        linear combinations to get the activations of the current layer. These steps are repeated for each layer in the network.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Initialize the activation for the input layer as the input data itself</span>
+        <span class="n">activation</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="n">activations</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>  <span class="c1"># List to store all activations, layer by layer</span>
+        <span class="n">zs</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List to store all z vectors, layer by layer</span>
+
+        <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">):</span>
+            <span class="c1"># Compute the linear combination of the current layer&#39;s weights, previous layer&#39;s activation, and bias</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">activation</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+            <span class="c1"># Store the computed linear combination</span>
+            <span class="n">zs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="c1"># Apply the Leaky ReLU activation function to the linear combination</span>
+            <span class="n">activation</span> <span class="o">=</span> <span class="n">leaky_relu</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="c1"># Store the output activation of the current layer</span>
+            <span class="n">activations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">zs</span><span class="p">,</span> <span class="n">activations</span></div>
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.backward">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.backward">[docs]</a>
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zs</span><span class="p">,</span> <span class="n">activations</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs backward propagation through the neural network.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - zs: A list of the linear combinations (z values) for each layer as calculated in the forward pass.</span>
+<span class="sd">        - activations: A list of the activations for each layer as calculated in the forward pass.</span>
+<span class="sd">        - y: The actual target values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - nabla_w: Gradients (partial derivatives) of the cost function with respect to the weights.</span>
+<span class="sd">        - nabla_b: Gradients (partial derivatives) of the cost function with respect to the biases.</span>
+
+<span class="sd">        The method calculates the gradient of the cost function with respect to each parameter (weights and biases)</span>
+<span class="sd">        in the network. This is done by applying the chain rule to propagate the error backward from the output layer</span>
+<span class="sd">        to the input layer. The gradients are used to update the weights and biases in the training step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Calculate the initial delta (error) at the output layer</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_derivative</span><span class="p">(</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">leaky_relu_derivative</span><span class="p">(</span><span class="n">zs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># Calculate the gradient for biases at the last layer</span>
+        <span class="n">nabla_b</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="c1"># Calculate the gradient for weights at the last layer</span>
+        <span class="n">nabla_w</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">delta</span><span class="p">)]</span>
+
+        <span class="c1"># Iterate over the layers in reverse order starting from the second last layer</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_sizes</span><span class="p">)):</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">zs</span><span class="p">[</span><span class="o">-</span><span class="n">l</span><span class="p">]</span>  <span class="c1"># The linear combination at the current layer</span>
+            <span class="n">sp</span> <span class="o">=</span> <span class="n">leaky_relu_derivative</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>  <span class="c1"># Derivative of activation function at the current layer</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">sp</span>  <span class="c1"># Update the error term (delta)</span>
+            <span class="n">nabla_b</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  <span class="c1"># Calculate and store the gradient for biases</span>
+            <span class="n">nabla_w</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">delta</span><span class="p">))</span>  <span class="c1"># Calculate and store the gradient for weights</span>
+
+        <span class="k">return</span> <span class="n">nabla_w</span><span class="p">,</span> <span class="n">nabla_b</span></div>
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.update_params">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.update_params">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nabla_w</span><span class="p">,</span> <span class="n">nabla_b</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the weights and biases of the network using gradient descent.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - nabla_w: Gradients of the cost function with respect to the weights.</span>
+<span class="sd">        - nabla_b: Gradients of the cost function with respect to the biases.</span>
+
+<span class="sd">        This method updates each weight and bias in the network by subtracting a portion of the gradient.</span>
+<span class="sd">        The portion is determined by the learning rate and the scale of the gradient.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Update weights with gradient descent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">nabla_w</span><span class="p">))</span> <span class="o">*</span> <span class="n">nw</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">nw</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">nabla_w</span><span class="p">)]</span>
+        <span class="c1"># Update biases with gradient descent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biases</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">nabla_b</span><span class="p">))</span> <span class="o">*</span> <span class="n">nb</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">nb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">,</span> <span class="n">nabla_b</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.train">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.train">[docs]</a>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trains the neural network on the provided dataset.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: Input features, a numpy array where each row is a sample and each column is a feature.</span>
+<span class="sd">        - y: Target values, a numpy array corresponding to the input samples.</span>
+
+<span class="sd">        The method iterates over the number of epochs, performing forward and backward propagation,</span>
+<span class="sd">        and updating the network parameters in each iteration. It also records the training loss after each epoch.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="c1"># Display the progress bar for training</span>
+            <span class="n">progress_bar</span><span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span><span class="p">)</span>
+            <span class="c1"># Forward propagation</span>
+            <span class="n">zs</span><span class="p">,</span> <span class="n">activations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="c1"># Calculate loss</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># Record loss</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loss_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+            <span class="c1"># Backward propagation to compute gradients</span>
+            <span class="n">nabla_w</span><span class="p">,</span> <span class="n">nabla_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">zs</span><span class="p">,</span> <span class="n">activations</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="c1"># Update network parameters</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">nabla_w</span><span class="p">,</span> <span class="n">nabla_b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.predict">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Makes predictions using the trained neural network.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: Input features, a numpy array where each row is a sample and each column is a feature.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - The predictions of the neural network as a numpy array.</span>
+
+<span class="sd">        This method uses forward propagation to compute the output of the network for the given input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Forward propagation to get the output activation</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">activations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Return the final layer&#39;s activation as the prediction</span></div>
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.loss_derivative">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.loss_derivative">[docs]</a>
+    <span class="k">def</span> <span class="nf">loss_derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_activations</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the derivative of the loss function.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - output_activations: The activations (outputs) from the final layer of the network.</span>
+<span class="sd">        - y: The actual target values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        - The derivative of the loss function.</span>
+
+<span class="sd">        This method calculates the gradient of the loss function with respect to the activations of the output layer.</span>
+<span class="sd">        It is used during backpropagation to compute gradients for the output layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">output_activations</span> <span class="o">-</span> <span class="n">y</span>  <span class="c1"># Derivative of mean squared error loss</span></div>
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.plot_loss">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.plot_loss">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the training loss over each epoch.</span>
+
+<span class="sd">        This method visualizes how the loss of the neural network decreases (ideally) over time during training.</span>
+<span class="sd">        It is a useful tool for monitoring the training process and diagnosing issues with model learning.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_history</span><span class="p">)</span>  <span class="c1"># Plot the recorded loss over epochs</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Training Loss Over Epochs&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Epochs&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Loss&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># Display the plot</span></div>
+
+
+<div class="viewcode-block" id="ImprovedNeuralNetwork.plot_predictions">
+<a class="viewcode-back" href="../artificial_neural_network.html#artificial_neural_network.ImprovedNeuralNetwork.plot_predictions">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the neural network&#39;s predictions against the actual data.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        - X: Input features, used for making predictions.</span>
+<span class="sd">        - y: Actual target values.</span>
+
+<span class="sd">        This method provides a visual comparison between the predictions made by the neural network and the actual data.</span>
+<span class="sd">        It is useful for assessing the model&#39;s performance visually.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c1"># Get predictions from the neural network</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;True Data&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>  <span class="c1"># Plot actual data</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Predictions&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>  <span class="c1"># Plot predicted data</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;True Data vs Neural Network Predictions&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Input Features&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Predicted Values&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c1"># Display the plot</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alberto Biscalchin, Adnane Soulaimani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
