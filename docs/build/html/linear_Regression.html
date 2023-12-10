@@ -5,20 +5,20 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>linear_Regression module &mdash; Gas Price Prediction 0.9 (Alpha) documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5f7b86c5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/js/theme.js"></script>
+        <script src="static/jquery.js?v=5d32c60e"></script>
+        <script src="static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="static/documentation_options.js?v=5f7b86c5"></script>
+        <script src="static/doctools.js?v=888ff710"></script>
+        <script src="static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -70,7 +70,7 @@
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">linear_Regression module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/linear_Regression.rst.txt" rel="nofollow"> View page source</a>
+            <a href="sources/linear_Regression.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -82,12 +82,12 @@
 <span id="linear-regression-module"></span><h1>linear_Regression module<a class="headerlink" href="#module-linear_Regression" title="Link to this heading"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="linear_Regression.calculate_linear_mse">
-<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">calculate_linear_mse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/linear_Regression.html#calculate_linear_mse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.calculate_linear_mse" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">calculate_linear_mse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="modules/linear_Regression.html#calculate_linear_mse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.calculate_linear_mse" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="linear_Regression.feature_scaling">
-<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">feature_scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/linear_Regression.html#feature_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.feature_scaling" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">feature_scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="modules/linear_Regression.html#feature_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.feature_scaling" title="Link to this definition"></a></dt>
 <dd><p>This function takes a DataFrame ‘data’ and performs feature scaling on the ‘Close’ column and
 a newly created ‘Numerical_Index’ column. The scaled values are stored in new columns
 ‘Close_scaled’ and ‘Numerical_Index_scaled’.</p>
@@ -103,17 +103,17 @@ a newly created ‘Numerical_Index’ column. The scaled values are stored in ne
 
 <dl class="py function">
 <dt class="sig sig-object py" id="linear_Regression.gradient_descent">
-<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">gradient_descent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/linear_Regression.html#gradient_descent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.gradient_descent" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">gradient_descent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="modules/linear_Regression.html#gradient_descent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.gradient_descent" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="linear_Regression.gradient_descent_gpu">
-<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">gradient_descent_gpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/linear_Regression.html#gradient_descent_gpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.gradient_descent_gpu" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">gradient_descent_gpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iterations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="modules/linear_Regression.html#gradient_descent_gpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.gradient_descent_gpu" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="linear_Regression.plot_data_linear_regression">
-<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">plot_data_linear_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/linear_Regression.html#plot_data_linear_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.plot_data_linear_regression" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">linear_Regression.</span></span><span class="sig-name descname"><span class="pre">plot_data_linear_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="modules/linear_Regression.html#plot_data_linear_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linear_Regression.plot_data_linear_regression" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
