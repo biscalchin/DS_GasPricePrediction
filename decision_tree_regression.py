@@ -7,55 +7,92 @@ class DecisionTreeNode:
     """ Decision Tree Node """
 
     def __init__(self, feature_index=None, threshold=None, left=None, right=None, value=None):
-        # per decisione
-        self.feature_index = feature_index
-        self.threshold = threshold
-        self.left = left
-        self.right = right
+        """
+        Initializes a node in the decision tree.
 
-        # per foglia
-        self.value = value
-
+        Parameters:
+        - feature_index (int): Index of the feature used for splitting the data.
+        - threshold (float): The threshold value for splitting the data at the feature.
+        - left (DecisionTreeNode): The left child node (for values less than or equal to the threshold).
+        - right (DecisionTreeNode): The right child node (for values greater than the threshold).
+        - value (float): The predicted value if this is a leaf node.
+        """
+        self.feature_index = feature_index  # Index of the feature to split on
+        self.threshold = threshold  # Threshold value for the split
+        self.left = left  # Left child
+        self.right = right  # Right child
+        self.value = value  # Predicted value if it's a leaf node
 
 class DecisionTreeRegressor:
     """ Base implementation of the regression using Decision Tree """
 
     def __init__(self, min_samples_split=2, max_depth=2):
-        self.root = None
-        self.min_samples_split = min_samples_split
-        self.max_depth = max_depth
+        """
+        Initializes the DecisionTreeRegressor.
+
+        Parameters:
+        - min_samples_split (int): The minimum number of samples required to consider a split.
+        - max_depth (int): The maximum depth of the tree.
+        """
+        self.root = None  # Root node of the decision tree
+        self.min_samples_split = min_samples_split  # Minimum number of samples to split
+        self.max_depth = max_depth  # Maximum depth of the tree
 
     def fit(self, X, y):
-        """ Train Decision Tree """
-        self.root = self._build_tree(X, y)
+        """
+        Trains the Decision Tree on the provided dataset.
+
+        Parameters:
+        - X: Feature data for training.
+        - y: Target values.
+        """
+        self.root = self._build_tree(X, y)  # Start building the tree from the root
 
     def _build_tree(self, X, y, current_depth=0):
-        """ Recursive Decision Tree Builder """
+        """
+        Recursively builds the decision tree.
+
+        Parameters:
+        - X: The feature data for the current node.
+        - y: The target values for the current node.
+        - current_depth (int): The current depth in the tree.
+
+        Returns:
+        - A DecisionTreeNode representing either an internal node or a leaf.
+        """
         num_samples, num_features = X.shape
 
-        # Stopping Criteria
+        # Check stopping criteria
         if num_samples >= self.min_samples_split and current_depth <= self.max_depth:
-            # Find best split
+            # Find the best split
             best_split = self._get_best_split(X, y, num_samples, num_features)
             if best_split["value"] is not None:
-                # build subtree
+                # Build the left and right subtrees recursively
                 left_subtree = self._build_tree(best_split["dataset_left"][:, :-1], best_split["dataset_left"][:, -1], current_depth + 1)
                 right_subtree = self._build_tree(best_split["dataset_right"][:, :-1], best_split["dataset_right"][:, -1], current_depth + 1)
                 return DecisionTreeNode(feature_index=best_split["feature_index"], threshold=best_split["threshold"], left=left_subtree, right=right_subtree)
 
-        # Leaf Node
+        # Create a leaf node
         return DecisionTreeNode(value=np.mean(y))
 
     def _get_best_split(self, X, y, num_samples, num_features):
-        """ Find the best division point for a node """
+        """
+        Finds the best feature and threshold to split the data.
+
+        Parameters:
+        - X: Feature data.
+        - y: Target values.
+        - num_samples (int): The number of samples in the data.
+        - num_features (int): The number of features in the data.
+
+        Returns:
+        - A dictionary containing information about the best split.
+        """
         best_split = {}
         min_error = float("inf")
-        total_splits = num_features * len(np.unique(X))
 
-        # checks every feature and every possible threshold value
         for feature_index in range(num_features):
             for threshold in np.unique(X[:, feature_index]):
-
                 dataset_left, dataset_right = self._split_dataset(X, y, feature_index, threshold)
                 if len(dataset_left) > 0 and len(dataset_right) > 0:
                     y_left, y_right = dataset_left[:, -1], dataset_right[:, -1]
@@ -68,7 +105,18 @@ class DecisionTreeRegressor:
 
     @staticmethod
     def _split_dataset(X, y, feature_index, threshold):
-        """ Divides the dataset according to the threshold on a feature """
+        """
+        Splits the dataset based on the given feature and threshold.
+
+        Parameters:
+        - X: Feature data.
+        - y: Target values.
+        - feature_index (int): The index of the feature to split on.
+        - threshold (float): The value of the threshold for splitting.
+
+        Returns:
+        - Two datasets corresponding to the left and right splits.
+        """
         left_indices = X[:, feature_index] <= threshold
         right_indices = X[:, feature_index] > threshold
 
@@ -82,24 +130,50 @@ class DecisionTreeRegressor:
 
     @staticmethod
     def _calculate_mse(y_left, y_right):
-        """ Calculate the mean square error for the split """
+        """
+        Calculates the mean squared error for a given split.
+
+        Parameters:
+        - y_left: Target values in the left split.
+        - y_right: Target values in the right split.
+
+        Returns:
+        - The mean squared error of the split.
+        """
         n_left, n_right = len(y_left), len(y_right)
         mse_left, mse_right = np.mean((y_left - np.mean(y_left)) ** 2), np.mean((y_right - np.mean(y_right)) ** 2)
         return (n_left * mse_left + n_right * mse_right) / (n_left + n_right)
 
     def predict(self, X):
-        """ Predicts values for the data provided """
+        """
+        Predicts values for the given data using the trained Decision Tree.
+
+        Parameters:
+        - X: The feature data for prediction.
+
+        Returns:
+        - An array of predicted values.
+        """
         return np.array([self._predict_value(x, self.root) for x in X])
 
     def _predict_value(self, x, tree):
-        """ Performs recursive prediction by traversing the tree """
+        """
+        Recursively predicts a value by traversing the tree.
+
+        Parameters:
+        - x: A single instance of feature data.
+        - tree: The current node in the decision tree.
+
+        Returns:
+        - The predicted value.
+        """
         if tree.value is not None:
-            return tree.value
+            return tree.value  # Return value if it's a leaf node
         feature_val = x[tree.feature_index]
         if feature_val <= tree.threshold:
-            return self._predict_value(x, tree.left)
+            return self._predict_value(x, tree.left)  # Go to left subtree
         else:
-            return self._predict_value(x, tree.right)
+            return self._predict_value(x, tree.right)  # Go to right subtree
 
 
 def plot_combined_regression_with_decision_tree(train_data, test_data, coefficients, m, q, tree_regressor):

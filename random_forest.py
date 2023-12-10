@@ -137,7 +137,6 @@ def plot_combined_regression_with_random_forest(train_data, test_data, coefficie
     plt.show()
 
 
-
 def plot_all_regression_notWorking(train_data, test_data, coefficients, m, q, y_pred_tree, y_pred_forest):
     """
     Plots all regression results on a single graph.
