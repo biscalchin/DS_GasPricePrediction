@@ -77,11 +77,32 @@ class ImprovedNeuralNetwork:
         """
         Initializes the neural network.
 
+        This constructor method sets up the initial parameters for the neural network,
+        including the architecture (number and size of layers), learning rate, and number
+        of epochs for training. It also initializes the weights and biases for each layer
+        using a specific initialization strategy for better performance.
+
         Parameters:
-        - layer_sizes (list): Sizes of each layer in the network.
-        - learning_rate (float): Learning rate for optimization.
-        - epochs (int): Number of epochs for training.
+        - layer_sizes (list): A list containing the sizes of each layer in the network.
+          The length of this list determines the number of layers in the network, and
+          each element specifies the number of neurons in that layer.
+        - learning_rate (float): The learning rate used in the optimization algorithm.
+          This value influences the step size in the gradient descent optimization.
+        - epochs (int): The number of times the entire training dataset will be passed
+          forward and backward through the neural network during training.
+
+        Attributes:
+        - weights (list): A list where each element is a weight matrix corresponding to
+          connections between two layers. These matrices are initialized using a normal
+          distribution scaled by the square root of the number of neurons in the
+          preceding layer (He initialization).
+        - biases (list): A list of bias vectors, one for each layer (excluding the input
+          layer). These are initialized to zero.
+        - loss_history (list): A list to record the loss value (such as mean squared error)
+          after each epoch during training. This is useful for monitoring the training
+          progress.
         """
+
         self.layer_sizes = layer_sizes
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -90,12 +111,17 @@ class ImprovedNeuralNetwork:
         self.weights = []
         self.biases = []
         for i in range(len(layer_sizes) - 1):
+            # Initializing weights using He initialization for better convergence with
+            # ReLU activations. This initialization helps in alleviating the vanishing
+            # gradient problem in deep networks.
             w = np.random.randn(layer_sizes[i], layer_sizes[i + 1]) * np.sqrt(2. / layer_sizes[i])
+            # Initializing biases to zero. In practice, initializing biases to zero is
+            # usually fine regardless of the choice of activation function.
             b = np.zeros((1, layer_sizes[i + 1]))
             self.weights.append(w)
             self.biases.append(b)
 
-        self.loss_history = []
+        self.loss_history = []  # Initialize the list to store loss values per epoch
 
     def forward(self, X):
         """
