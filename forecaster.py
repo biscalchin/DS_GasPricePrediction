@@ -355,7 +355,6 @@ def forecaster():
         Preparing Random Forest Regression ROC 
         """
 
-
         # Making predictions on the test dataset
         y_pred_forest = random_forest.predict(X_test)
 

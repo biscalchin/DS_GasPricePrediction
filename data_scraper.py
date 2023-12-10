@@ -12,132 +12,190 @@ resLabel = "NG=F"
 NG = yf.Ticker(resLabel)
 
 
-# Define the function to create the name of the CSV file in the format: {prefix}_NG_{today}{suffix}.csv
 def get_filename():
+    """
+    Generates a filename for saving CSV data.
+
+    The filename is in the format 'NG_{current_date}.csv', where {current_date} is today's date.
+
+    Returns:
+    - A string representing the generated filename.
+    """
     today = dt.date.today()  # Get the current date
     return f"NG_{today}.csv"  # Return the formatted filename
 
 
-# Define the function to write a pandas DataFrame to a CSV file with a specified filename
 def save_to_csv(data, filename):
-    data.to_csv(filename, index=False)
+    """
+    Writes a pandas DataFrame to a CSV file.
+
+    Parameters:
+    - data: The pandas DataFrame to be written to the CSV.
+    - filename: The name of the file to save the data to.
+    """
+    data.to_csv(filename, index=False)  # Save the DataFrame to a CSV file without including row indices
 
 
-# Define a function to get the period from the user with strict input validation
 def get_period(interval="1m"):
+    """
+    Determines the data retrieval period based on the specified interval.
+
+    Parameters:
+    - interval: A string indicating the time interval (default is "1m").
+
+    Returns:
+    - A string representing the data retrieval period.
+    """
     if interval == "1" or interval == "1m":
-        return "7d"
+        return "7d"  # If the interval is 1 minute, return a period of 7 days
     elif interval == "5m" or interval == "5":
-        return "60d"
+        return "60d"  # If the interval is 5 minutes, return a period of 60 days
     else:
         print(f"Unknown Error occurred!\n\n")
 
 
-# Define a function to get the data retrieval interval from the user with input validation
 def get_interval():
+    """
+    Prompts the user to choose a data retrieval interval.
+
+    Validates the user's input and only accepts specific values ("1m", "5m", etc.).
+
+    Returns:
+    - A string representing the user's choice of interval.
+    """
     while True:
         interval = input(f"Choose the interval:\n1. 1m\n2. 5m\n>")
-        if interval == "1" or interval == "1m" or interval == "1min":
-            return "1m"
-        elif interval == "2" or interval == "5min" or interval == "5m" or interval == "5":
-            return "5m"
+        if interval in ["1", "1m", "1min"]:
+            return "1m"  # Return "1m" if the user selects a 1-minute interval
+        elif interval in ["2", "5min", "5m", "5"]:
+            return "5m"  # Return "5m" if the user selects a 5-minute interval
         else:
             print(f"Error: Invalid Choice!\n\n")
 
 
-# Define the main listener function
 def data_scraper():
+    """
+    The main function to retrieve, clean, and save data.
+
+    It handles user input for the interval and period, retrieves and cleans the data,
+    and then saves it to a CSV file. It also handles exceptions and keyboard interrupts.
+    """
     try:
-        # Get user input for period and interval
-        interval = get_interval()
-        period = get_period(interval)
-        # Retrieve and save historical data based on user input
-        data = NG.history(period=period, interval=interval)
-        # launching the data cleaner
+        interval = get_interval()  # Get interval from user
+        period = get_period(interval)  # Determine the period based on interval
+        data = NG.history(period=period, interval=interval)  # Retrieve data
         print("Data cleaning initiated. \n*** Data are now clean ***")
-        data = data_cleaner(data)
+        data = data_cleaner(data)  # Clean the retrieved data
 
         print(data)
-        file_name = get_filename()
+        file_name = get_filename()  # Generate filename for saving
         print(f"Saving data to {file_name}...")
-
-        save_to_csv(data, file_name)
+        save_to_csv(data, file_name)  # Save data to CSV
 
         print("Operation Succeed!")
 
-    # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
         print("Task finished successfully")
     except Exception as e:
         print("Exception encountered:", e)
 
 
-# Define a function called data_cleaner that takes a parameter called resource
 def data_cleaner(resource):
+    """
+    Cleans the provided data resource by dropping specific columns.
+
+    Rounds the 'Close' values to 4 decimal places and drops unnecessary columns.
+
+    Parameters:
+    - resource: The pandas DataFrame to be cleaned.
+
+    Returns:
+    - The cleaned DataFrame.
+    """
     try:
         print("Cleaning...")
         print("Dropping useless columns...")
-        # Drop the columns named Dividends and Stock Splits from resource along the horizontal axis
-        resource = resource.drop(["Dividends", "Stock Splits", "Low", "High", "Open"], axis=1)
+        resource = resource.drop(["Dividends", "Stock Splits", "Low", "High", "Open"], axis=1)  # Drop specified columns
         print("Operation Succeed!")
-        # Return resource as the output of the function
         for i in range(len(resource)):
-            resource.loc[:, 'Close'] = round(resource['Close'], 4)
+            resource.loc[:, 'Close'] = round(resource['Close'], 4)  # Round 'Close' values to 4 decimal places
         return resource
-    # Handle KeyboardInterrupt to gracefully exit the program
     except KeyboardInterrupt:
         print("Task finished successfully")
-    # Handle any other exception and print its message
     except Exception as e:
         print("Exception encountered:", e)
 
 
-# Define a function to load data
-def load_data(choise=""):
+def load_data(choice=""):
+    """
+    Loads data from a CSV file, offering the user the choice to use existing data or scrape new data.
+
+    If existing data is found, the user is asked whether to use it or to scrape new data.
+
+    Parameters:
+    - choice: An optional string to bypass user input (useful for recursive calls).
+
+    Returns:
+    - A pandas DataFrame with the loaded data.
+    """
     try:
-        # Get the filename from the user using the get_filename function
-        file_name = get_filename()
-        # Read data from a CSV file into a Pandas DataFrame
-        data = pd.read_csv(file_name)
-        # Check if a previous session's data is found
+        file_name = get_filename()  # Generate filename for loading
+        data = pd.read_csv(file_name)  # Read data from the CSV file
         print(f"{data} \nFound data from a previous session.")
-        if choise == "":
-            choise = input("Would you like to use this data? (y/n)\n> ")
+        if choice == "":
+            choice = input("Would you like to use this data? (y/n)\n> ")
 
-        if choise == "y" or choise == "yes" or choise == "Y":
-            return data  # Return the existing data
+        if choice.lower() in ["y", "yes"]:
+            return data  # Return existing data if user chooses so
         else:
-            print("Collecting new datas...")
+            print("Collecting new data...")
             time.sleep(0.5)
-            data_scraper()  # If 'n', scrape new data
-            return load_data("y")  # Recursively call load_data() to load the new data
+            data_scraper()  # Scrape new data if user chooses so
+            return load_data("y")  # Load the new data
 
-    # Handle KeyboardInterrupt to exit gracefully
     except KeyboardInterrupt:
         print("Task interrupted successfully")
-
-    # Handle other exceptions and print their messages
     except Exception as e:
-        print(f"Couldn't find data from a previous session.\n Extracting New Data")
-        data_scraper()  # Scrape new data
-        return load_data("y")  # Recursively call load_data() to load the new data
+        print(f"Couldn't find data from a previous session.\nExtracting New Data")
+        data_scraper()  # Scrape new data in case of exception
+        return load_data("y")  # Load the new data
 
 
 def get_float(string):
+    """
+    Prompts the user to enter a floating-point number and validates the input.
+
+    If the input is not a valid float, the function recursively prompts again.
+
+    Parameters:
+    - string: The prompt string to be displayed to the user.
+
+    Returns:
+    - A floating-point number entered by the user.
+    """
     try:
         n = input(string)
-        n = float(n)
-        return n
+        return float(n)
     except Exception as e:
         print("Error! Wrong number: Expected Float", e)
-        return get_float(string)
+        return get_float(string)  # Recursive call for re-prompting the user
 
 
 def get_int(string):
+    """
+    Prompts the user to enter an integer and validates the input.
+
+    If the input is not a valid integer, the function recursively prompts again.
+
+    Parameters:
+    - string: The prompt string to be displayed to the user.
+
+    Returns:
+    - An integer entered by the user.
+    """
     try:
         n = input(string)
-        n = int(n)
-        return n
+        return int(n)
     except Exception as e:
         print("Error! Wrong number: Expected Integer", e)
-        return get_int(string)
+        return get_int(string)  # Recursive call for re-prompting the user

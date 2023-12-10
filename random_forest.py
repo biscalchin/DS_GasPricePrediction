@@ -6,29 +6,78 @@ class RandomForestRegressor:
     """ Random Forest Regressor """
 
     def __init__(self, n_estimators=100, min_samples_split=2, max_depth=2):
+        """
+        Initializes the RandomForestRegressor with specified parameters.
+
+        Parameters:
+        - n_estimators (int): The number of trees in the forest.
+        - min_samples_split (int): The minimum number of samples required to split an internal node.
+        - max_depth (int): The maximum depth of the trees.
+
+        Attributes:
+        - trees (list): A list to store the individual decision trees.
+        """
         self.n_estimators = n_estimators
         self.min_samples_split = min_samples_split
         self.max_depth = max_depth
         self.trees = []
 
     def fit(self, X, y):
-        """ Train Random Forest """
+        """
+        Trains the Random Forest on the given dataset.
+
+        This method creates individual decision trees, each trained on a bootstrap sample
+        of the original dataset, and stores them in the 'trees' list.
+
+        Parameters:
+        - X: The features of the training dataset.
+        - y: The target values of the training dataset.
+        """
         for _ in range(self.n_estimators):
+            # Initialize a new decision tree with the given parameters
             tree = DecisionTreeRegressor(min_samples_split=self.min_samples_split, max_depth=self.max_depth)
+            # Generate a bootstrap sample of the dataset
             bootstrap_X, bootstrap_y = self._bootstrap_sample(X, y)
+            # Fit the tree to the bootstrap sample
             tree.fit(bootstrap_X, bootstrap_y)
+            # Add the fitted tree to the list of trees
             self.trees.append(tree)
 
     def predict(self, X):
-        """ Predicts values for the data provided using the average of all trees """
+        """
+        Predicts target values for the given dataset using the trained Random Forest.
+
+        The prediction for each instance is the average prediction of all the trees.
+
+        Parameters:
+        - X: The features of the dataset for which to make predictions.
+
+        Returns:
+        - The average predictions of all trees.
+        """
+        # Collect predictions from each tree
         tree_predictions = np.array([tree.predict(X) for tree in self.trees])
+        # Return the average of these predictions
         return np.mean(tree_predictions, axis=0)
 
     @staticmethod
     def _bootstrap_sample(X, y):
-        """ Create a bootstrap sample of the dataset """
+        """
+        Generates a bootstrap sample from the dataset.
+
+        A bootstrap sample is a randomly selected subset of data with replacement.
+
+        Parameters:
+        - X: The features of the dataset.
+        - y: The target values of the dataset.
+
+        Returns:
+        - A bootstrap sample of the dataset.
+        """
         n_samples = X.shape[0]
+        # Randomly select indices with replacement
         indices = np.random.choice(n_samples, size=n_samples, replace=True)
+        # Return the corresponding sample
         return X[indices], y[indices]
 
 
