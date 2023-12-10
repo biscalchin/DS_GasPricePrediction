@@ -218,7 +218,7 @@ def plot_combined_regression_with_decision_tree(train_data, test_data, coefficie
     plt.scatter(test_data['Numerical_Index_scaled'], test_data['Close_scaled'], color="blue", label="Test Data", s=1)
     plt.plot(X_train_sorted, y_pred_poly_train_sorted, color="red", label="Polynomial Regression")
     plt.plot(X_train, y_pred_linear_train, color="green", label="Linear Regression")
-    plt.plot(X_test_tree_sorted, y_pred_tree_test_sorted, color='purple', label='Decision Tree Regression')
+    plt.plot(X_test_tree_sorted, y_pred_tree_test_sorted, color='orange', label='Decision Tree Regression')
     plt.xlabel("Normalized Numerical Index")
     plt.ylabel("Normalized Close Price")
     plt.title("Combined Regression Models")
