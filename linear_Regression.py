@@ -32,34 +32,41 @@ def feature_scaling(data):
 
 
 def gradient_descent(data, learning_rate, num_iterations):
+    # Initialize the parameters 'm' (slope) and 'q' (y-intercept) for linear regression
     m = 0
     q = 0
+    # Determine the number of data points
     n = len(data)
 
     for i in range(num_iterations):
-        # Call progress_bar function here to show the progress
+        # Update the progress bar for each iteration
         progress_bar(i+1, num_iterations)
 
+        # Initialize gradients for 'm' and 'q' to zero for each iteration
         m_gradient = 0
         q_gradient = 0
 
         for j in range(n):
+            # Extract the scaled numerical index and the scaled close value for each data point
             x = data['Numerical_Index_scaled'].iloc[j]
             y = data['Close_scaled'].iloc[j]
+            # Calculate the current prediction based on the current values of 'm' and 'q'
             prediction = m * x + q
 
-            # Compute the gradients of the cost function with respect to m and q
+            # Compute the partial derivatives (gradients) of the cost function with respect to 'm' and 'q'
             m_gradient += -(2 / n) * x * (y - prediction)
             q_gradient += -(2 / n) * (y - prediction)
 
-        # Update m and q using the gradients and the learning rate
+        # Update the values of 'm' and 'q' by moving against the gradient by a step size determined by the learning rate
         m -= learning_rate * m_gradient
         q -= learning_rate * q_gradient
 
-    # Print a new line after the progress bar is complete
+    # Print a new line for readability after the progress bar is complete
     print()
 
+    # Return the optimized values of 'm' and 'q' after completing all iterations
     return m, q
+
 
 
 def gradient_descent_gpu(data, learning_rate, num_iterations):
