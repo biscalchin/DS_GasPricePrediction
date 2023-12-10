@@ -523,8 +523,6 @@ def forecaster():
         graph_spinner.stop()
         """
 
-
-
         print()
         print_section_header("Mean Square Error (MSE)")
         print("")
