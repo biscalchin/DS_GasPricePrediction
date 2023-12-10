@@ -270,7 +270,7 @@ def forecaster():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Creation and training of the decision tree regression model
-        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=5)  # Editable parameters (2,5) is optimal
+        tree_regressor = DecisionTreeRegressor(min_samples_split=2, max_depth=4)  # Editable parameters (2,4) is optimal
         tree_regressor.fit(X_train, y_train)
 
         # Predictions on test data
